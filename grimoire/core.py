@@ -1,4 +1,5 @@
 import os
+from copy import copy
 
 
 os.environ['PYTHONHASHSEED'] = "0"
@@ -26,31 +27,34 @@ class Page:
 
         hashbrown = f'{hash(hash(self) + hash(str(state)))}'
         options = []
+        text= ''
         if hashbrown not in self.cache:
             self.cache.append(hashbrown)
-            state = self.fn(state.copy())
+            text, state = self.fn(copy(state))
             if self.redirect:
-                options = self.redirect.render(state, start=False)
-                options = options[1] if options else []
-                html = self.redirect.template(state, options)
+                rrend = self.redirect.render(state, start=False)
+                options = rrend[1] if rrend else []
+                text = rrend[2] if rrend else ''
+                html = self.redirect.template(text, state, options)
             else:
                 for option in self.options:
                     rend = option.render(state, start=False)
                     if rend:
                         options.append((rend[0], option))
-                html = self.template(state, options)
+                html = self.template(text, state, options)
             filename =  'index.html' if start else f'{hashbrown}.html'
             with open(f'build/{filename}', 'w') as f:
                 f.write(str(html))
-        return hashbrown, options
+        return hashbrown, options, text
 
 
 class Grimoire:
 
-    def __init__(self, template):
+    def __init__(self, template, state_class=None):
         self.template = template
         self.pages = {}
         self.start = None
+        self.state_class = state_class
 
     def start_page(self, f):
         page = Page(f, None, lambda s: True, self.template)
@@ -75,4 +79,5 @@ class Grimoire:
         return decorator
     
     def render(self, **state):
+        state = self.state_class(**state) if self.state_class else state
         self.start.render(state)
