@@ -6,14 +6,18 @@ os.environ['PYTHONHASHSEED'] = "0"
 
 class Page:
 
-    def __init__(self, fn, option_text, template):
+    def __init__(self, fn, option_text, condition, template):
         self.fn = fn
         self.cache = []
         self.options = []
         self.template = template
+        self.condition = condition
         self.option_text = option_text
 
     def render(self, state, start=True):
+        if not self.condition(state):
+            return None
+        
         if start:
             for root, _, files in os.walk("build"):
                 for file in files:
@@ -22,9 +26,10 @@ class Page:
         hashbrown = f'{hash(hash(self) + hash(str(state)))}'
         if hashbrown not in self.cache:
             self.cache.append(hashbrown)
-            text, state = self.fn(state.copy())
+            state = self.fn(state.copy())
             options = [(o.render(state, start=False), o) for o in self.options]
-            html = self.template(text, options)
+            options = [o for o in options if o[0]] # filter options which don't meet condition
+            html = self.template(state, options)
             filename =  'index.html' if start else f'{hashbrown}.html'
             with open(f'build/{filename}', 'w') as f:
                 f.write(str(html))
@@ -39,14 +44,16 @@ class Grimoire:
         self.start = None
 
     def start_page(self, f):
-        page = Page(f, 'start over', self.template)
+        page = Page(f, None, lambda s: True, self.template)
         self.start = page
         self.pages[f] = page
         return f
 
-    def option(self, parent, text):
+    def option(self, parent, text, condition=lambda s: True):
         def decorator(f):
-            page = self.pages[f] if f in self.pages else Page(f, text, self.template)
+            page = Page(f, text, condition, self.template)
+            if f in self.pages:
+                page.options = self.pages[f].options  
             self.pages[parent].options.append(page)
             self.pages[f] = page
             return f
