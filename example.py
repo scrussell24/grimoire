@@ -1,38 +1,56 @@
+from grimoire import Grimoire
+
 from hype import *
 
-from grimoire import Page
+
+def template(text, option_links):
+        return Doc(
+            Html(
+                Body(
+                    P(text),
+                    Ul(*[Li(A(o.option_text, href=f'{l}.html')) for l, o in option_links])
+                )
+            )     
+        )
+
+
+grim = Grimoire(template)
+
+@grim.start_page
+def start_page(state):
+    state['day'] = 0
+    return f'you have arrived on a desolate planet. Day {state["day"]}', state
+
+
+@grim.option(start_page, "go north")
+def north(state):
+    state['day'] += 1
+    return f'You have travelled north, it took you one day. Day {state["day"]}', state
+
+
+@grim.option(start_page, "go south")
+def south(state):
+    state['day'] += 1
+    return f'You have travelled south, it took you one day. Day {state["day"]}', state
+
+
+@grim.option(start_page, "go east")
+def east(state):
+    state['day'] += 1
+    return f'You have travelled east, it took you one day. Day {state["day"]}', state
+
+
+@grim.option(start_page, "go west")
+def west(state):
+    state['day'] += 1
+    return f'You have travelled west, it took you one day. Day {state["day"]}', state
+
+
+grim.option(north, 'start over')(start_page)
+grim.option(south, 'start over')(start_page)
+grim.option(east, 'start over')(start_page)
+grim.option(west, 'start over')(start_page)
 
 
 if __name__ == '__main__':
-
-    # define pages
-    first = Page(
-        text='Choose your own adventure!'
-    )
-
-    class Second(Page):
-        text = 'You chose {choice}!'
-
-    
-    rafting = Second(choice='Whitewater rafting')
-    climbing = Second(choice='Climb Mount Everest')
-    moon = Second(choice='Take a rocket to the moon')
-
-    
-    third = Page(
-        text='You still need to do {choice}'
-    )
-
-
-    # hook'em up
-    first.option('Go Whitewater rafting', rafting)
-    first.option('Climb Mount Everest', climbing)
-    first.option('To the moon', moon)
-    rafting.option('what to do next?', third)
-    climbing.option('what to do next?', third)
-    moon.option('what to do next?', third)
-    third.option('home', first)
-
-
-    ## render
-    first.render()
+    grim.render()

@@ -1,58 +1,56 @@
 import os
-from uuid import uuid4
-
-from hype import *
 
 
 os.environ['PYTHONHASHSEED'] = "0"
 
 
 class Page:
-    _cache = []
 
-    def __init__(
-        self,
-        updater=None,
-        **state
-    ):
-        self.state = state
+    def __init__(self, fn, option_text, template):
+        self.fn = fn
+        self.cache = []
         self.options = []
-        self.updater = updater
-        self.option_text = ""
-        self.id = uuid4()
-    
-    def option(self, option_text, page):
-        page.option_text = option_text
-        self.options.append(page)
-    
-    def template(self, state, option_links):
-        text = state.get('text').format(**state)
-        return Doc(
-            Html(
-                Body(
-                    P(text),
-                    Ul(*[Li(A(o.option_text, href=f'{l}.html')) for l, o in option_links])
-                )
-            )     
-        )
+        self.template = template
+        self.option_text = option_text
 
-    def render(self, start=True, **state):
+    def render(self, state, start=True):
         if start:
             for root, _, files in os.walk("build"):
                 for file in files:
                     os.remove(os.path.join(root, file))
 
-        new_state = {**state, **self.state}
-        if self.updater:
-            new_state = self.updater(new_state)
-        
-        page_hash = f'{abs(int(hash(str(self.id) + str(new_state))))}'
-        is_cached = page_hash in self._cache
-        self._cache.append(page_hash)
-        if not is_cached:
-            hashes = [(o.render(**new_state, start=False), o) for o in self.options]
-            content = self.template(new_state, hashes)
-            filename = 'index.html' if start else f'{page_hash}.html'
+        hashbrown = f'{hash(hash(self) + hash(str(state)))}'
+        if hashbrown not in self.cache:
+            self.cache.append(hashbrown)
+            text, state = self.fn(state.copy())
+            options = [(o.render(state, start=False), o) for o in self.options]
+            html = self.template(text, options)
+            filename =  'index.html' if start else f'{hashbrown}.html'
             with open(f'build/{filename}', 'w') as f:
-                f.write(str(content))
-        return page_hash
+                f.write(str(html))
+        return hashbrown
+
+
+class Grimoire:
+
+    def __init__(self, template):
+        self.template = template
+        self.pages = {}
+        self.start = None
+
+    def start_page(self, f):
+        page = Page(f, 'start over', self.template)
+        self.start = page
+        self.pages[f] = page
+        return f
+
+    def option(self, parent, text):
+        def decorator(f):
+            page = self.pages[f] if f in self.pages else Page(f, text, self.template)
+            self.pages[parent].options.append(page)
+            self.pages[f] = page
+            return f
+        return decorator
+    
+    def render(self, **state):
+        self.start.render(state)

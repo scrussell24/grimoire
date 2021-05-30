@@ -1,1 +1,1 @@
-from grimoire.core import Page
+from grimoire.core import Grimoire
