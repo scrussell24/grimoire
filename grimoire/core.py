@@ -10,6 +10,7 @@ class Page:
         self.fn = fn
         self.cache = []
         self.options = []
+        self.redirect = None
         self.template = template
         self.condition = condition
         self.option_text = option_text
@@ -24,16 +25,24 @@ class Page:
                     os.remove(os.path.join(root, file))
 
         hashbrown = f'{hash(hash(self) + hash(str(state)))}'
+        options = []
         if hashbrown not in self.cache:
             self.cache.append(hashbrown)
             state = self.fn(state.copy())
-            options = [(o.render(state, start=False), o) for o in self.options]
-            options = [o for o in options if o[0]] # filter options which don't meet condition
-            html = self.template(state, options)
+            if self.redirect:
+                options = self.redirect.render(state, start=False)
+                options = options[1] if options else []
+                html = self.redirect.template(state, options)
+            else:
+                for option in self.options:
+                    rend = option.render(state, start=False)
+                    if rend:
+                        options.append((rend[0], option))
+                html = self.template(state, options)
             filename =  'index.html' if start else f'{hashbrown}.html'
             with open(f'build/{filename}', 'w') as f:
                 f.write(str(html))
-        return hashbrown
+        return hashbrown, options
 
 
 class Grimoire:
@@ -56,6 +65,12 @@ class Grimoire:
                 page.options = self.pages[f].options  
             self.pages[parent].options.append(page)
             self.pages[f] = page
+            return f
+        return decorator
+
+    def redirect(self, parent):
+        def decorator(f):
+            self.pages[f].redirect = self.pages[parent]
             return f
         return decorator
     

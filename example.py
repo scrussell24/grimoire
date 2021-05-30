@@ -53,13 +53,11 @@ def west(state):
     return state
 
 
+@grim.redirect(west)
 @grim.option(west, 'pick up a stick', lambda s: s['sticks'] < 10)
 def pick_up_stick(state):
     state['sticks'] += 1
-    state['text'] = f'You Picked up a stick.'
     return state
- 
-grim.option(pick_up_stick, 'west')(west)
 
 grim.option(north, 'start over (n)')(start_page)
 grim.option(south, 'start over (s)')(start_page)
