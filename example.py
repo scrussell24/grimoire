@@ -1,11 +1,18 @@
-from dataclasses import dataclass, asdict
+from typing import Tuple
+from dataclasses import dataclass
 
-from grimoire import Grimoire
+from grimoire import Grimoire, Page
 
 from hype import *
 
 
-def template(text, state, option_links):
+@dataclass
+class State:
+    day: str = None
+    sticks: int = 0
+
+
+def template(text: str, state: State, option_links: Tuple[str, Page]):
         return Doc(
             Html(
                 Body(
@@ -15,10 +22,7 @@ def template(text, state, option_links):
             )     
         )
 
-@dataclass
-class State:
-    day: str = None
-    sticks: int = 0
+
 
 
 app = Grimoire(template, state_class=State)
