@@ -17,35 +17,38 @@ class Page:
         self.option_text = option_text
 
     def render(self, state, start=True):
+        # if the condition is not met, do not render this
+        # page (also don't pass the link info back)
         if not self.condition(state):
             return None
-        
+        # clear out the build dir
         if start:
             for root, _, files in os.walk("build"):
                 for file in files:
                     os.remove(os.path.join(root, file))
 
-        hashbrown = f'{hash(hash(self) + hash(str(state)))}'
+        page_hash = f'{hash(hash(self) + hash(str(state)))}'
         options = []
         text= ''
-        if hashbrown not in self.cache:
-            self.cache.append(hashbrown)
+        if page_hash not in self.cache:
+            self.cache.append(page_hash)
             text, state = self.fn(copy(state))
             if self.redirect:
-                rrend = self.redirect.render(state, start=False)
-                options = rrend[1] if rrend else []
-                text = rrend[2] if rrend else ''
+                render = self.redirect.render(state, start=False)
+                options = render[1] if render else []
+                text = render[2] if render else ''
                 html = self.redirect.template(text, state, options)
             else:
                 for option in self.options:
-                    rend = option.render(state, start=False)
-                    if rend:
-                        options.append((rend[0], option))
+                    render = option.render(state, start=False)
+                    if render:
+                        options.append((render[0], option))
                 html = self.template(text, state, options)
-            filename =  'index.html' if start else f'{hashbrown}.html'
+            filename =  'index.html' if start else f'{page_hash}.html'
+            # write the file to the build dir
             with open(f'build/{filename}', 'w') as f:
                 f.write(str(html))
-        return hashbrown, options, text
+        return page_hash, options, text
 
 
 class Grimoire:
