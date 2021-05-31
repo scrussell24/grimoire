@@ -56,15 +56,17 @@ class Grimoire:
         self.start = None
         self.state_class = state_class
 
-    def start_page(self, f):
+    def start_page(self, f, template=None):
+        template = template if template else self.template
         page = Page(f, None, lambda s: True, self.template)
         self.start = page
         self.pages[f] = page
         return f
 
-    def option(self, parent, text, condition=lambda s: True):
+    def option(self, parent, text, condition=lambda s: True, template=None):
+        template = template if template else self.template
         def decorator(f):
-            page = Page(f, text, condition, self.template)
+            page = Page(f, text, condition, template)
             if f in self.pages:
                 page.options = self.pages[f].options  
             self.pages[parent].options.append(page)
