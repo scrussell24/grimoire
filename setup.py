@@ -5,7 +5,7 @@ with open('README.md', 'r') as fh:
 
 setuptools.setup(
     name="grimoire-if",
-    version="0.0.1",
+    version="0.0.2",
     author="Scott Russell",
     author_email="me@scottrussell.net",
     description="An interactive fiction compiler library",
