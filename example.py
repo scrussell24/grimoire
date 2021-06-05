@@ -66,6 +66,7 @@ def pick_up_stick(state):
     state.sticks += 1
     return '', state
 
+
 app.option(north, 'start over (n)')(start_page)
 app.option(south, 'start over (s)')(start_page)
 app.option(east, 'start over (e)')(start_page)
