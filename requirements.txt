@@ -1,2 +1,4 @@
 hype-html
 pytest
+wheel
+twine
