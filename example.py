@@ -1,7 +1,6 @@
-from typing import Tuple
 from dataclasses import dataclass
 
-from grimoire import Grimoire, Page
+from grimoire import Grimoire
 
 from hype import *
 
@@ -12,20 +11,7 @@ class State:
     sticks: int = 0
 
 
-def template(text: str, state: State, option_links: Tuple[str, Page]):
-        return Doc(
-            Html(
-                Body(
-                    P(text),
-                    Ul(*[Li(A(o.option_text, href=f'{l}.html')) for l, o in option_links])
-                )
-            )     
-        )
-
-
-
-
-app = Grimoire(template, state_class=State)
+app = Grimoire(state=State)
 
 
 @app.start_page

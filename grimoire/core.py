@@ -1,8 +1,24 @@
 import os
 from copy import copy
+from typing import List
+from dataclasses import dataclass
+
+
+from hype import *
 
 
 os.environ['PYTHONHASHSEED'] = "0"
+
+
+def DEFAULT_TEMPLATE(text: str, state, options: List[Option]):
+    return Doc(
+      Html(
+        Body(
+          P(text),
+          Ul(*[Li(A(o.text, href=f'{o.hash}.html')) for o in options])
+        )
+      )     
+    )
 
 
 class Page:
@@ -12,18 +28,18 @@ class Page:
         self.cache = []
         self.options = []
         self.redirect = None
-        self.template = template
         self.condition = condition
         self.option_text = option_text
+        self.template = template if template else DEFAULT_TEMPLATE
 
     def render(self, state, start=True):
         # if the condition is not met, do not render this
         # page (also don't pass the link info back)
         if not self.condition(state):
             return None
-        # clear out the build dir
+        # clear out the site dir
         if start:
-            for root, _, files in os.walk("build"):
+            for root, _, files in os.walk("site"):
                 for file in files:
                     os.remove(os.path.join(root, file))
 
@@ -39,25 +55,25 @@ class Page:
                 text = render[2] if render else ''
                 html = self.redirect.template(text, state, options)
             else:
-                for option in self.options:
-                    render = option.render(state, start=False)
+                for page in self.options:
+                    render = page.render(state, start=False)
                     if render:
-                        options.append((render[0], option))
+                        options.append(Option(render[0], page.option_text))
                 html = self.template(text, state, options)
             filename =  'index.html' if start else f'{page_hash}.html'
             # write the file to the build dir
-            with open(f'build/{filename}', 'w') as f:
+            with open(f'site/{filename}', 'w') as f:
                 f.write(str(html))
         return page_hash, options, text
 
 
 class Grimoire:
 
-    def __init__(self, template, state_class=None):
+    def __init__(self, template=None, state=None):
         self.template = template
         self.pages = {}
         self.start = None
-        self.state_class = state_class
+        self.state_class = state
 
     def start_page(self, f, template=None):
         template = template if template else self.template
@@ -86,3 +102,9 @@ class Grimoire:
     def render(self, **state):
         state = self.state_class(**state) if self.state_class else state
         self.start.render(state)
+
+
+@dataclass
+class Option:
+    hash: str
+    text: str
