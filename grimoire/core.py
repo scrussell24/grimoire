@@ -10,11 +10,11 @@ from hype import *
 os.environ['PYTHONHASHSEED'] = "0"
 
 
-def DEFAULT_TEMPLATE(text: str, state, options: List[Option]):
+def DEFAULT_TEMPLATE(content: str, state, options: List[Option]):
     return Doc(
       Html(
         Body(
-          P(text),
+          Div(content),
           Ul(*[Li(A(o.text, href=f'{o.hash}.html')) for o in options])
         )
       )     
