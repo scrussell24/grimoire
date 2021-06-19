@@ -7,17 +7,6 @@ from grimoire import Grimoire
 from hype import *
 
 
-def make_decorator(f):
-    '''A simple decorator for creating more decorators'''
-    @wraps(f)
-    def outter(g):
-        @wraps(g)
-        def inner(*args, **kwds):
-            return f(g, *args, **kwds)
-        return inner
-    return outter
-
-
 @dataclass
 class State:
     water: int = 0
@@ -29,73 +18,7 @@ def template(content: str, state: State, options: List[Option]) -> str:
     return Doc(
       Html(
         Head(
-            Style(
-'''body {
-    background-color: #fefefe;
-    color: #222222;
-    font-size: 1.5rem;
-    font-family: Georgia, 'Times New Roman', Times, serif;
-}
-
-ul {
-    list-style-type: none;
-    padding-left: 0px;
-}
-
-li {
-    padding-bottom: 1.2rem;
-}
-
-a {
-    color: #192f50;
-    text-decoration: none;
-}
-
-.grid {
-    display: grid;
-    grid-template-areas: 'left content right';
-    grid-template-columns: 1fr 3fr 1fr;
-}
-
-.grid__content {
-    border-width: 1px;
-    border-style: solid;
-    border-color: #222222;
-}
-
-.content_grid {
-    display: grid;
-    grid-template-areas: 'left right';
-    grid-template-columns: 3fr 2fr;
-    height: 400px;
-}
-
-.content_grid__left {
-    padding: 20px;
-    background-color: #efefef;
-}
-
-.content_grid__right {
-    padding: 20px;
-    background-color: #222222;
-    color: #efefef;
-}
-
-.options {
-    padding: 20px;
-    height: 200px;
-}
-
- @media screen and (max-width: 1000px) {
-    .grid {
-        grid-template-columns: 0fr 10fr 0fr;
-    }
-
-    body {
-        font-size: 1.6em;
-    }
-}'''
-            )
+            Style(CSS)
         ),
         Body(
           Div(
@@ -109,6 +32,17 @@ a {
         )
       )     
     )
+
+
+def make_decorator(f):
+    '''A simple decorator for creating more decorators'''
+    @wraps(f)
+    def outter(g):
+        @wraps(g)
+        def inner(*args, **kwds):
+            return f(g, *args, **kwds)
+        return inner
+    return outter
 
 
 @make_decorator
@@ -203,6 +137,73 @@ app.option(landing_site, "Head north", condition=lambda s: not s.water or not s.
 app.option(landing_site, "Head east", condition=lambda s: not s.water or not s.ore or not s.organics)(east)
 app.option(landing_site, "Head south", condition=lambda s: not s.water or not s.ore or not s.organics)(south)
 app.option(landing_site, "Play again", condition=lambda s: s.water and s.ore and s.organics)(start)
+
+
+CSS = '''body {
+    background-color: #fefefe;
+    color: #222222;
+    font-size: 1.5rem;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+}
+
+ul {
+    list-style-type: none;
+    padding-left: 0px;
+}
+
+li {
+    padding-bottom: 1.2rem;
+}
+
+a {
+    color: #192f50;
+    text-decoration: none;
+}
+
+.grid {
+    display: grid;
+    grid-template-areas: 'left content right';
+    grid-template-columns: 1fr 3fr 1fr;
+}
+
+.grid__content {
+    border-width: 1px;
+    border-style: solid;
+    border-color: #222222;
+}
+
+.content_grid {
+    display: grid;
+    grid-template-areas: 'left right';
+    grid-template-columns: 3fr 2fr;
+    height: 400px;
+}
+
+.content_grid__left {
+    padding: 20px;
+    background-color: #efefef;
+}
+
+.content_grid__right {
+    padding: 20px;
+    background-color: #222222;
+    color: #efefef;
+}
+
+.options {
+    padding: 20px;
+    height: 200px;
+}
+
+ @media screen and (max-width: 1000px) {
+    .grid {
+        grid-template-columns: 0fr 10fr 0fr;
+    }
+
+    body {
+        font-size: 1.6em;
+    }
+}'''
 
 
 if __name__ == '__main__':
