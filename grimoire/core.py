@@ -80,7 +80,7 @@ class Grimoire:
         self.start = None
         self.state_class = state
 
-    def start_page(self, f):
+    def begin(self, f):
         page = Page(f, None, lambda s: True)
         self.start = page
         self.pages[f] = page

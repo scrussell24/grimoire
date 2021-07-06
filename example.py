@@ -68,7 +68,7 @@ def inventory(fn, state: State, *opts: List[Option]) -> Tuple[Element, State]:
 app = Grimoire(state=State)
 
 
-@app.start_page
+@app.begin
 @base
 @inventory
 def start(

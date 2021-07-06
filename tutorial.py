@@ -71,7 +71,7 @@ def code_section(lexer=PythonLexer):
 app = Grimoire(state=State)
 
 
-@app.start_page
+@app.begin
 @base
 def start(state: State, *opts: List[Option]) -> Tuple[str, State]:
     return H1("Grimoire"), state
@@ -91,7 +91,6 @@ def install(state: State, *opts: List[Option]) -> Tuple[str, str, State]:
 
 
 app.option(install, "Previous - Getting Started")(start)
-
 
 @app.option(install, "Next - Create an app")
 @base
