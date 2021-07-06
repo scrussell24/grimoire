@@ -1,8 +1,9 @@
-from typing import Tuple, List
-from dataclasses import dataclass
+from typing import *
 from functools import wraps
+from dataclasses import dataclass
 
-from grimoire import Grimoire
+
+from grimoire import Grimoire, Option
 
 from hype import *
 
@@ -12,26 +13,6 @@ class State:
     water: int = 0
     ore: int = 0
     organics: int = 0
-
-
-def template(content: str, state: State, options: List[Option]) -> str:
-    return Doc(
-      Html(
-        Head(
-            Style(CSS)
-        ),
-        Body(
-          Div(
-              Div(_class="grid__left"),
-              Div(
-                  content,
-                  Div(Ul(*[Li(A(o.text, href=f'{o.hash}.html')) for o in options]), _class="options"),
-                  _class="grid__content"),
-              Div(_class="grid__right"),
-              _class="grid")
-        )
-      )     
-    )
 
 
 def make_decorator(f):
@@ -46,8 +27,30 @@ def make_decorator(f):
 
 
 @make_decorator
-def inventory(fn, state: State) -> Tuple[str, State]:
-    content, state = fn(state)
+def base(fn, state: State, *opts: List[Option]) -> Tuple[Element, State]:
+    content, state = fn(state, *opts)
+    return Doc(
+      Html(
+        Head(
+            Style(CSS)
+        ),
+        Body(
+          Div(
+              Div(_class="grid__left"),
+              Div(
+                  content,
+                  Div(Ul(*[Li(Grimoire.Link(o)) for o in opts]), _class="options"),
+                  _class="grid__content"),
+              Div(_class="grid__right"),
+              _class="grid")
+        )
+      )     
+    ), state
+
+
+@make_decorator
+def inventory(fn, state: State, *opts: List[Option]) -> Tuple[Element, State]:
+    content, state = fn(state, *opts)
     inv = Ul()
     inv.append(Li(f"Water: {state.water}")) if state.water else ""
     inv.append(Li(f" Ore: {state.ore}")) if state.ore else ""
@@ -62,23 +65,31 @@ def inventory(fn, state: State) -> Tuple[str, State]:
     ), state
 
 
-app = Grimoire(state=State, template=template)
+app = Grimoire(state=State)
 
 
 @app.start_page
+@base
 @inventory
-def start(state: State) -> Tuple[str, State]:
+def start(
+    state: State,
+    west: Option,
+    north: Option,
+    east: Option,
+    south: Option
+) -> Tuple[Element, State]:
     state = State()
     return Div(
         P("You have crash landed on an alien planet."),
         P("To fix your spaceship and escape, you need to scavenge three resources from the planet's surface: water, ore, and organic material."),
-        P("You stand facing west and see a vast ocean. Turning clockwise, you gaze up at the rising peaks of a mountain range to the north. Continuing east, a forest of tree like structures stretches to the horizon and transitions into a lifeless desert to the south.")
+        P(f"You stand facing {Grimoire.Link(west, 'west')} and see a vast ocean. Turning clockwise, you gaze up at the rising peaks of a mountain range to the {Grimoire.Link(north, 'north')}. Continuing {Link(east, 'east')}, a forest of tree like structures stretches to the horizon and transitions into a lifeless desert to the {Link(south, 'south')}.")
     ), state
     
 
 @app.option(start, "Head west")
+@base
 @inventory
-def west(state: State) -> Tuple[str, State]:
+def west(state: State, *opts: List[Option]) -> Tuple[str, State]:
     state.water = 1
     return Div(
         P("You stand on the beach of a large ocean. You notice the lack of waves. No moon, you think"),
@@ -87,8 +98,9 @@ def west(state: State) -> Tuple[str, State]:
 
 
 @app.option(start, "Head north")
+@base
 @inventory
-def north(state: State) -> Tuple[str, State]:
+def north(state: State, *opts: List[Option]) -> Tuple[str, State]:
     state.ore = 1
     return Div(
         P("You head north and find yourself at the foothills of the mountains."),
@@ -97,8 +109,9 @@ def north(state: State) -> Tuple[str, State]:
 
 
 @app.option(start, "Head east")
+@base
 @inventory
-def east(state: State) -> Tuple[str, State]:
+def east(state: State, *opts: List[Option]) -> Tuple[str, State]:
     state.organics = 1
     return Div(
         P("You head east, towards what looks like a temperate forest. These aren't quite trees, but they almost certainly qualifiy as life and provide a nice shade from the midday sun."),
@@ -107,8 +120,9 @@ def east(state: State) -> Tuple[str, State]:
 
 
 @app.option(start, "Head south")
+@base
 @inventory
-def south(state):
+def south(state, *opts: List[Option]):
     return Div(
         P("You head south towards the lifeless desert. You take the last swig of water from your canteen and collapse to the sand. There's no way you can make it back to your ship. You have died.")
     ), state
@@ -117,8 +131,9 @@ def south(state):
 @app.option(west, "Head back to the landing site")
 @app.option(north, "Head back to the landing site")
 @app.option(east, "Head back to the landing site")
+@base
 @inventory
-def landing_site(state: State) -> Tuple[str, State]:
+def landing_site(state: State, *opts: List[Option]) -> Tuple[str, State]:
     if (state.water and state.ore and state.organics):
         return Div(
             P("You have all of the materials you need to fix your ship."),
@@ -207,4 +222,4 @@ a {
 
 
 if __name__ == '__main__':
-    app.render()
+    app.render(path='example/')

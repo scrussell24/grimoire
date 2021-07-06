@@ -5,13 +5,13 @@ with open('README.md', 'r') as fh:
 
 setuptools.setup(
     name="grimoire-if",
-    version="0.0.3",
+    version="0.0.4",
     install_requires=[
         'hype-html'
     ],
     author="Scott Russell",
     author_email="me@scottrussell.net",
-    description="An interactive fiction compiler library",
+    description="Static Interactive Fiction Generator",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/scrussell24/grimoire",

@@ -8,3 +8,5 @@ example*
 grimoire_if.egg-info
 dist/
 site/
+tutorial/
+example/

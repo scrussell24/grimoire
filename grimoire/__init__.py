@@ -1,1 +1,1 @@
-from grimoire.core import Grimoire, Page, Option
+from grimoire.core import Grimoire, Page, Option, default_template

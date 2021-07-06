@@ -1,7 +1,9 @@
 import os
 from copy import copy
-from typing import List
+from inspect import signature
 from dataclasses import dataclass
+from typing import List, Optional
+
 
 
 from hype import *
@@ -10,12 +12,12 @@ from hype import *
 os.environ['PYTHONHASHSEED'] = "0"
 
 
-def DEFAULT_TEMPLATE(content: str, state, options: List[Option]):
+def default_template(content: str, *opts: List[Option]):
     return Doc(
       Html(
         Body(
           Div(content),
-          Ul(*[Li(A(o.text, href=f'{o.hash}.html')) for o in options])
+          Ul(*[Li(Link(o)) for o in opts])
         )
       )     
     )
@@ -23,16 +25,15 @@ def DEFAULT_TEMPLATE(content: str, state, options: List[Option]):
 
 class Page:
 
-    def __init__(self, fn, option_text, condition, template):
+    def __init__(self, fn, option_text, condition):
         self.fn = fn
         self.cache = []
         self.options = []
         self.redirect = None
         self.condition = condition
         self.option_text = option_text
-        self.template = template if template else DEFAULT_TEMPLATE
 
-    def render(self, state, start=True):
+    def render(self, state, path, start=True):
         # if the condition is not met, do not render this
         # page (also don't pass the link info back)
         if not self.condition(state):
@@ -45,47 +46,49 @@ class Page:
 
         page_hash = f'{hash(hash(self) + hash(str(state)))}'
         options = []
-        text= ''
+        content = ''
         if page_hash not in self.cache:
             self.cache.append(page_hash)
-            text, state = self.fn(copy(state))
+            params = signature(self.fn).parameters
+            content, state = self.fn(copy(state), *[Option('', '') for n in range(len(params) - 1)])
             if self.redirect:
-                render = self.redirect.render(state, start=False)
+                render = self.redirect.render(state, path, start=False)
                 options = render[1] if render else []
-                text = render[2] if render else ''
-                html = self.redirect.template(text, state, options)
+                content = render[2] if render else ''
             else:
                 for page in self.options:
-                    render = page.render(state, start=False)
+                    render = page.render(state, path, start=False)
                     if render:
                         options.append(Option(render[0], page.option_text))
-                html = self.template(text, state, options)
+                content, state = self.fn(copy(state), *options)
             filename =  'index.html' if start else f'{page_hash}.html'
             # write the file to the build dir
-            with open(f'site/{filename}', 'w') as f:
-                f.write(str(html))
-        return page_hash, options, text
+            with open(f'{path}{filename}', 'w') as f:
+                f.write(str(content))
+        return page_hash, options, content
 
 
 class Grimoire:
 
-    def __init__(self, template=None, state=None):
-        self.template = template
+    @staticmethod
+    def Link(opt: Option, text: Optional[str] = None):
+        text = text if text else opt.text
+        return A(text, href=f'{opt.hash}.html')
+
+    def __init__(self, state=None):
         self.pages = {}
         self.start = None
         self.state_class = state
 
-    def start_page(self, f, template=None):
-        template = template if template else self.template
-        page = Page(f, None, lambda s: True, self.template)
+    def start_page(self, f):
+        page = Page(f, None, lambda s: True)
         self.start = page
         self.pages[f] = page
         return f
 
-    def option(self, parent, text, condition=lambda s: True, template=None):
-        template = template if template else self.template
+    def option(self, parent, text, condition=lambda s: True):
         def decorator(f):
-            page = Page(f, text, condition, template)
+            page = Page(f, text, condition)
             if f in self.pages:
                 page.options = self.pages[f].options  
             self.pages[parent].options.append(page)
@@ -99,9 +102,9 @@ class Grimoire:
             return f
         return decorator
     
-    def render(self, **state):
+    def render(self, path="site/", **state):
         state = self.state_class(**state) if self.state_class else state
-        self.start.render(state)
+        self.start.render(state, path)
 
 
 @dataclass
