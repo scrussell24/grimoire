@@ -17,38 +17,38 @@ def test(state, green, blue, red):
     return f'Choose a color: {link(green, "green")}, {link(red, "red")}, {link(blue, "blue")}', state
 
 
-@app.page()
-@default_template
-def chose_color(state, *opts):
-    return f'You chose {state["color"]}', state
-
-
-@chose_color.redirect
 @test.option('green')
 def choose_green(state):
     state['color'] = 'green'
     return state
 
 
-@chose_color.redirect
 @test.option('blue')
 def choose_blue(state):
     state['color'] = 'blue'
     return state
 
 
-@chose_color.redirect
 @test.option('red')
 def choose_red(state):
     state['color'] = 'red'
     return state
 
 
+@choose_green.redirect
+@choose_blue.redirect
+@choose_red.redirect
+@default_template
+def chose_color(state, *opts):
+    return f'You chose {state["color"]}', state
+
+
 chose_color.option('Start Over')(start)
 
 
 # State class
-# custom template
+# default/custom template
+# link
 
 
 if __name__ == '__main__':

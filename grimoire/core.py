@@ -118,15 +118,17 @@ class Grimoire:
             return decorator
         return outter
 
-    def redirect(self, child):
+    def redirect(self, parent):
         def decorator(f):
-            if child not in self.pages:
-                page = Page(child, '', lambda s: True)
-                self.pages[child] = page
             if f not in self.pages:
                 page = Page(f, '', lambda s: True)
                 self.pages[f] = page
-            self.pages[f].redirect = self.pages[child]
+            if parent not in self.pages:
+                page = Page(parent, '', lambda s: True)
+                self.pages[parent] = page
+            self.pages[parent].redirect = self.pages[f]
+            setattr(f, 'option', self.option(f))
+            setattr(f, 'redirect', self.redirect(f))
             return f
         return decorator
     
