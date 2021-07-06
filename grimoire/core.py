@@ -57,7 +57,7 @@ class Page:
             return None
         # clear out the site dir
         if start:
-            for root, _, files in os.walk("site"):
+            for root, _, files in os.walk(path):
                 for file in files:
                     os.remove(os.path.join(root, file))
 
@@ -68,6 +68,11 @@ class Page:
             self.cache.append(page_hash)
             if self.redirect:
                 state = self.fn(copy(state))
+                if len(state) > 1:
+                    # Just incase the user sends unused content back
+                    # if there's a redirect we only care about state
+                    # TODO maybe warning here?
+                    state = state[1]
                 render = self.redirect.render(state, path, start=False)
                 options = render[1] if render else []
                 content = render[2] if render else ''
