@@ -3,7 +3,7 @@ from functools import wraps
 from dataclasses import dataclass
 
 
-from grimoire import Grimoire, Option
+from grimoire import Grimoire, Option, link
 
 from hype import *
 
@@ -39,7 +39,7 @@ def base(fn, state: State, *opts: List[Option]) -> Tuple[Element, State]:
               Div(_class="grid__left"),
               Div(
                   content,
-                  Div(Ul(*[Li(Grimoire.Link(o)) for o in opts]), _class="options"),
+                  Div(Ul(*[Li(link(o)) for o in opts]), _class="options"),
                   _class="grid__content"),
               Div(_class="grid__right"),
               _class="grid")
@@ -68,7 +68,7 @@ def inventory(fn, state: State, *opts: List[Option]) -> Tuple[Element, State]:
 app = Grimoire(state=State)
 
 
-@app.begin
+@app.page(start=True)
 @base
 @inventory
 def start(
@@ -82,11 +82,11 @@ def start(
     return Div(
         P("You have crash landed on an alien planet."),
         P("To fix your spaceship and escape, you need to scavenge three resources from the planet's surface: water, ore, and organic material."),
-        P(f"You stand facing {Grimoire.Link(west, 'west')} and see a vast ocean. Turning clockwise, you gaze up at the rising peaks of a mountain range to the {Grimoire.Link(north, 'north')}. Continuing {Link(east, 'east')}, a forest of tree like structures stretches to the horizon and transitions into a lifeless desert to the {Link(south, 'south')}.")
+        P(f"You stand facing {link(west, 'west')} and see a vast ocean. Turning clockwise, you gaze up at the rising peaks of a mountain range to the {link(north, 'north')}. Continuing {Link(east, 'east')}, a forest of tree like structures stretches to the horizon and transitions into a lifeless desert to the {Link(south, 'south')}.")
     ), state
     
 
-@app.option(start, "Head west")
+@start.option("Head west")
 @base
 @inventory
 def west(state: State, *opts: List[Option]) -> Tuple[str, State]:
@@ -97,7 +97,7 @@ def west(state: State, *opts: List[Option]) -> Tuple[str, State]:
     ), state
 
 
-@app.option(start, "Head north")
+@start.option("Head north")
 @base
 @inventory
 def north(state: State, *opts: List[Option]) -> Tuple[str, State]:
@@ -108,7 +108,7 @@ def north(state: State, *opts: List[Option]) -> Tuple[str, State]:
     ), state
 
 
-@app.option(start, "Head east")
+@start.option("Head east")
 @base
 @inventory
 def east(state: State, *opts: List[Option]) -> Tuple[str, State]:
@@ -119,7 +119,7 @@ def east(state: State, *opts: List[Option]) -> Tuple[str, State]:
     ), state
 
 
-@app.option(start, "Head south")
+@start.option("Head south")
 @base
 @inventory
 def south(state, *opts: List[Option]):
@@ -128,9 +128,9 @@ def south(state, *opts: List[Option]):
     ), state
 
 
-@app.option(west, "Head back to the landing site")
-@app.option(north, "Head back to the landing site")
-@app.option(east, "Head back to the landing site")
+@west.option("Head back to the landing site")
+@north.option("Head back to the landing site")
+@east.option("Head back to the landing site")
 @base
 @inventory
 def landing_site(state: State, *opts: List[Option]) -> Tuple[str, State]:
@@ -146,12 +146,12 @@ def landing_site(state: State, *opts: List[Option]) -> Tuple[str, State]:
     ), state
 
 
-app.option(south, "Start Over")(start)
-app.option(landing_site, "Head west", condition=lambda s: not s.water or not s.ore or not s.organics)(west)
-app.option(landing_site, "Head north", condition=lambda s: not s.water or not s.ore or not s.organics)(north)
-app.option(landing_site, "Head east", condition=lambda s: not s.water or not s.ore or not s.organics)(east)
-app.option(landing_site, "Head south", condition=lambda s: not s.water or not s.ore or not s.organics)(south)
-app.option(landing_site, "Play again", condition=lambda s: s.water and s.ore and s.organics)(start)
+south.option("Start Over")(start)
+landing_site.option("Head west", condition=lambda s: not s.water or not s.ore or not s.organics)(west)
+landing_site.option("Head north", condition=lambda s: not s.water or not s.ore or not s.organics)(north)
+landing_site.option("Head east", condition=lambda s: not s.water or not s.ore or not s.organics)(east)
+landing_site.option("Head south", condition=lambda s: not s.water or not s.ore or not s.organics)(south)
+landing_site.option("Play again", condition=lambda s: s.water and s.ore and s.organics)(start)
 
 
 CSS = '''body {
