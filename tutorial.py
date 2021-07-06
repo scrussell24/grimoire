@@ -71,13 +71,13 @@ def code_section(lexer=PythonLexer):
 app = Grimoire(state=State)
 
 
-@app.begin
+@app.page(start=True)
 @base
 def start(state: State, *opts: List[Option]) -> Tuple[str, State]:
     return H1("Grimoire"), state
 
 
-@app.option(start, "Installation")
+@start.option("Installation")
 @base
 @code_section(lexer=BashLexer)
 def install(state: State, *opts: List[Option]) -> Tuple[str, str, State]:
@@ -90,9 +90,9 @@ def install(state: State, *opts: List[Option]) -> Tuple[str, str, State]:
     return content, code, state
 
 
-app.option(install, "Previous - Getting Started")(start)
+install.option("Previous - Getting Started")(start)
 
-@app.option(install, "Next - Create an app")
+@install.option("Next - Create an app")
 @base
 @code_section()
 def create_an_app(state: State, *opts: List[Option]) -> Tuple[str, str, State]:
@@ -104,10 +104,10 @@ def create_an_app(state: State, *opts: List[Option]) -> Tuple[str, str, State]:
     return content, code, state
 
 
-app.option(create_an_app, "Previous - Installation")(install)
+create_an_app.option("Previous - Installation")(install)
 
 
-@app.option(create_an_app, "Next - Add your first page")
+@create_an_app.option("Next - Add your first page")
 @base
 @code_section()
 def first_page(state: State, *opts: List[Option]) -> Tuple[str, str, State]:
