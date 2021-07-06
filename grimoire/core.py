@@ -1,10 +1,9 @@
 import os
 from copy import copy
+from functools import wraps
 from inspect import signature
 from dataclasses import dataclass
 from typing import List, Optional
-
-
 
 from hype import *
 
@@ -12,15 +11,33 @@ from hype import *
 os.environ['PYTHONHASHSEED'] = "0"
 
 
-def default_template(content: str, *opts: List[Option]):
+def make_decorator(f):
+    '''A simple decorator for creating more decorators'''
+    @wraps(f)
+    def outter(g):
+        @wraps(g)
+        def inner(*args, **kwds):
+            return f(g, *args, **kwds)
+        return inner
+    return outter
+
+
+def link(opt: Option, text: Optional[str] = None):
+        text = text if text else opt.text
+        return A(text, href=f'{opt.hash}.html')  
+
+
+@make_decorator
+def default_template(fn, state: str, *opts: List[Option]):
+    content, state = fn(state, *opts)
     return Doc(
-      Html(
-        Body(
-          Div(content),
-          Ul(*[Li(Link(o)) for o in opts])
-        )
-      )     
-    )
+        Html(
+            Body(
+                Div(content),
+                Ul(*[Li(link(o)) for o in opts])
+            )
+        )     
+    ), state   
 
 
 class Page:
@@ -49,13 +66,14 @@ class Page:
         content = ''
         if page_hash not in self.cache:
             self.cache.append(page_hash)
-            params = signature(self.fn).parameters
-            content, state = self.fn(copy(state), *[Option('', '') for n in range(len(params) - 1)])
             if self.redirect:
+                state = self.fn(copy(state))
                 render = self.redirect.render(state, path, start=False)
                 options = render[1] if render else []
                 content = render[2] if render else ''
             else:
+                params = signature(self.fn).parameters
+                content, state = self.fn(copy(state), *[Option('', '') for n in range(len(params) - 1)])
                 for page in self.options:
                     render = page.render(state, path, start=False)
                     if render:
@@ -65,45 +83,55 @@ class Page:
             # write the file to the build dir
             with open(f'{path}{filename}', 'w') as f:
                 f.write(str(content))
-        return page_hash, options, content
+        return page_hash, options, content  
 
 
 class Grimoire:
-
-    @staticmethod
-    def Link(opt: Option, text: Optional[str] = None):
-        text = text if text else opt.text
-        return A(text, href=f'{opt.hash}.html')
 
     def __init__(self, state=None):
         self.pages = {}
         self.start = None
         self.state_class = state
 
-    def begin(self, f):
-        page = Page(f, None, lambda s: True)
-        self.start = page
-        self.pages[f] = page
-        return f
-
-    def option(self, parent, text, condition=lambda s: True):
+    def page(self, start=False):
         def decorator(f):
-            page = Page(f, text, condition)
-            if f in self.pages:
-                page.options = self.pages[f].options  
-            self.pages[parent].options.append(page)
+            page = Page(f, '', lambda s: True)
+            if start:
+                self.start = page
             self.pages[f] = page
+            setattr(f, 'option', self.option(f))
+            setattr(f, 'redirect', self.redirect(f))
             return f
         return decorator
 
-    def redirect(self, parent):
+    def option(self, parent):
+        def outter(text, condition=lambda s: True):
+            def decorator(f):
+                page = Page(f, text, condition)
+                if f in self.pages:
+                    page.options = self.pages[f].options  
+                self.pages[parent].options.append(page)
+                self.pages[f] = page
+                setattr(f, 'option', self.option(f))
+                setattr(f, 'redirect', self.redirect(f))
+                return f
+            return decorator
+        return outter
+
+    def redirect(self, child):
         def decorator(f):
-            self.pages[f].redirect = self.pages[parent]
+            if child not in self.pages:
+                page = Page(child, '', lambda s: True)
+                self.pages[child] = page
+            if f not in self.pages:
+                page = Page(f, '', lambda s: True)
+                self.pages[f] = page
+            self.pages[f].redirect = self.pages[child]
             return f
         return decorator
     
-    def render(self, path="site/", **state):
-        state = self.state_class(**state) if self.state_class else state
+    def render(self, path="site/"):
+        state = self.state_class() if self.state_class else {}
         self.start.render(state, path)
 
 
