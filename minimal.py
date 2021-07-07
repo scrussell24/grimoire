@@ -8,7 +8,7 @@ app = Grimoire()
 @default_template
 def start(state, *opts):
     state = {}
-    return 'Hello Adventurer. Welcome to the world of Grimoire.', state
+    return 'You ', state
 
 
 @start.option("test")
@@ -17,24 +17,16 @@ def test(state, red, blue, green):
     return f'Choose a color: {link(green, "green")}, {link(red, "red")}, {link(blue, "blue")}', state
 
 
-def choose_green(state):
-    state['color'] = 'green'
-    return state
+def update_color(color):
+    def inner(state):
+        state['color'] = color
+        return state
+    return inner
 
 
-def choose_blue(state):
-    state['color'] = 'blue'
-    return state
-
-
-def choose_red(state):
-    state['color'] = 'red'
-    return state
-
-
-@test.option('choose green', update=choose_green)
-@test.option('choose blue',  update=choose_blue)
-@test.option('choose red',  update=choose_red)
+@test.option('choose green', update=update_color('green'))
+@test.option('choose blue',  update=update_color('blue'))
+@test.option('choose red',  update=update_color('red'))
 @default_template
 def chose_color(state, *opts):
     return f'You chose {state["color"]}', state
