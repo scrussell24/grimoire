@@ -18,10 +18,10 @@ def test(state, red, blue, green):
 
 
 def update_color(color):
-    def inner(state):
+    def updater(state):
         state['color'] = color
         return state
-    return inner
+    return updater
 
 
 @test.option('choose green', update=update_color('green'))
