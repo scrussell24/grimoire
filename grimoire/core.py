@@ -1,25 +1,15 @@
 import os
 from copy import copy
-from functools import wraps
 from inspect import signature
 from dataclasses import dataclass
 from typing import List, Optional
 
 from hype import *
 
+from grimoire.utils import make_decorator
+
 
 os.environ['PYTHONHASHSEED'] = "0"
-
-
-def make_decorator(f):
-    '''A simple decorator for creating more decorators'''
-    @wraps(f)
-    def outter(g):
-        @wraps(g)
-        def inner(*args, **kwds):
-            return f(g, *args, **kwds)
-        return inner
-    return outter
 
 
 def link(opt: Option, text: Optional[str] = None):
