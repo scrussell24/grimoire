@@ -71,12 +71,17 @@ class Page:
         if page_hash not in self.cache:
             self.cache.append(page_hash)
             params = signature(self.fn).parameters
-            _, new_state = self.fn(copy(state), *[Option('', '') for _ in range(len(params) - 1)])
+            _, new_state = self.fn(copy(state), *[Option('', '', '') for _ in range(len(params) - 1)])
             options = []
             for page in self.options:
                 child_hash = page.render(copy(new_state), path, start=False)
                 if child_hash:
-                    options.append(Option(child_hash, page.option_text))
+                    options.append(Option(child_hash, page.option_text, page.fn.__name__))
+            # filtered_options = []
+            # for param in params:
+            #     for opt in options:
+            #         if param == 'opts' or param == opt.name:
+            #             filtered_options.append(opt)
             content, state = self.fn(state, *options)
             filename =  'index.html' if start else f'{page_hash}.html'
             # write the file to the build dir
@@ -92,22 +97,19 @@ class Grimoire:
         self.start = None
         self.state_class = state
 
-    def page(self, start=False):
-        def decorator(f):
-            page = Page(f, '', lambda s: True, update=lambda s: s)
-            if start:
-                self.start = page
-            self.pages[f] = page
-            setattr(f, 'option', self.option(f))
-            return f
-        return decorator
+    def begin(self, f):
+        page = Page(f, '', lambda s: True, update=lambda s: s)
+        self.start = page
+        self.pages[f] = page
+        setattr(f, 'option', self.option(f))
+        return f
 
     def option(self, parent):
         def outter(text, condition=lambda s: True, update=lambda s: s):
             def decorator(f):
                 page = Page(f, text, condition, update)
                 if f in self.pages:
-                    page.options = self.pages[f].options  
+                    page.options = self.pages[f].options
                 self.pages[parent].options.append(page)
                 self.pages[f] = page
                 setattr(f, 'option', self.option(f))
@@ -124,3 +126,4 @@ class Grimoire:
 class Option:
     hash: str
     text: str
+    name: str
