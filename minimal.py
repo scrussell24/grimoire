@@ -3,7 +3,7 @@ from grimoire import Grimoire, default_template, link
 
 app = Grimoire()
 
-# first page
+
 @app.page(start=True)
 @default_template
 def start(state, *opts):
