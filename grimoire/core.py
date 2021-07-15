@@ -1,8 +1,7 @@
 import os
 from copy import copy
+from typing import List
 from inspect import signature
-from dataclasses import dataclass
-from typing import List, Optional
 
 from hype import *
 
@@ -12,20 +11,14 @@ from grimoire.utils import make_decorator
 os.environ['PYTHONHASHSEED'] = "0"
 
 
-def link(opt: Option, text: Optional[str] = None):
-        text = text if text else opt.text
-        return A(text, href=f'{opt.hash}.html')  
+def link(text, option_hash):
+        return A(text, href=f'{option_hash}.html')  
 
 
-def internal_link(opt: Option, text: Optional[str] = None):
-        text = text if text else opt.text
-        return A(text, href=f'#{opt.hash}')  
-
-
-def default_template(title):
+def default_template(title: str):
     @make_decorator
     def inner(fn, state: str, *opts: List[Option]):
-        content, state = fn(state, *opts)
+        content, options, state = fn(state, *opts)
         return Doc(
             Html(
                 Head(
@@ -33,7 +26,7 @@ def default_template(title):
                 ),
                 Body(
                     Div(content),
-                    Ul(*[Li(link(o)) for o in opts])
+                    Ul(*[Li(link(o[0], o[1])) for o in options])
                 )
             )     
         ), state   
@@ -42,16 +35,11 @@ def default_template(title):
 
 class Page:
 
-    def __init__(self, fn, option_text, condition, update):
+    def __init__(self, fn):
         self.fn = fn
         self.cache = []
-        self.options = []
-        self.redirect = None
-        self.update = update
-        self.condition = condition
-        self.option_text = option_text
 
-    def render(self, state, path, start=True):
+    def render(self, state, pages, path, start=True):
         
         # clear out the site dir
         if start:
@@ -59,34 +47,41 @@ class Page:
                 for file in files:
                     os.remove(os.path.join(root, file))
         
-        # if the condition is not met, do not render this
-        # page (also don't pass the link info back)
-        if not self.condition(state):
-            return None
-
-        # run update function
-        state = self.update(state)
 
         page_hash = f'{abs(hash(hash(self) + hash(str(state))))}'
         if page_hash not in self.cache:
             self.cache.append(page_hash)
+
+            # find the option pages we'll need to inject
             params = signature(self.fn).parameters
-            _, new_state = self.fn(copy(state), *[Option('', '', '') for _ in range(len(params) - 1)])
             options = []
-            for page in self.options:
-                child_hash = page.render(copy(new_state), path, start=False)
+            for name, page in pages.items():
+                if name in params.keys():
+                    options.append(page)
+
+            # render with the state so we can render the children (we're going to have to do this again)
+            _, new_state = self.fn(copy(state), *['' for _ in range(len(params) - 1)])
+
+            # render the children
+            child_hashes = []
+            for page in options:
+                child_hash = page.render(copy(new_state), pages, path, start=False)
                 if child_hash:
-                    options.append(Option(child_hash, page.option_text, page.fn.__name__))
-            # filtered_options = []
-            # for param in params:
-            #     for opt in options:
-            #         if param == 'opts' or param == opt.name:
-            #             filtered_options.append(opt)
-            content, state = self.fn(state, *options)
-            filename =  'index.html' if start else f'{page_hash}.html'
+                    child_hashes.append(child_hash)
+            
+            # render this page again with the correct children hashes
+            content, state = self.fn(copy(state), *child_hashes)
+
             # write the file to the build dir
+            filename =  f'{page_hash}.html'
             with open(f'{path}{filename}', 'w') as f:
                 f.write(str(content))
+
+            # if it's the first page also write an index file
+            if start:
+                with open(f'{path}index.html', 'w') as f:
+                    f.write(str(content))                
+
         return page_hash
 
 
@@ -97,33 +92,15 @@ class Grimoire:
         self.start = None
         self.state_class = state
 
-    def begin(self, f):
-        page = Page(f, '', lambda s: True, update=lambda s: s)
-        self.start = page
-        self.pages[f] = page
-        setattr(f, 'option', self.option(f))
-        return f
+    def page(self, start=False):
+        def inner(f):
+            page = Page(f)
+            if start:
+                self.start = page
+            self.pages[f.__name__] = page
+            return f
+        return inner
 
-    def option(self, parent):
-        def outter(text, condition=lambda s: True, update=lambda s: s):
-            def decorator(f):
-                page = Page(f, text, condition, update)
-                if f in self.pages:
-                    page.options = self.pages[f].options
-                self.pages[parent].options.append(page)
-                self.pages[f] = page
-                setattr(f, 'option', self.option(f))
-                return f
-            return decorator
-        return outter
-    
     def render(self, path="site/"):
         state = self.state_class() if self.state_class else {}
-        self.start.render(state, path)
-
-
-@dataclass
-class Option:
-    hash: str
-    text: str
-    name: str
+        self.start.render(state, self.pages, path)

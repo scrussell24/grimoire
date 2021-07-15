@@ -1,3 +1,6 @@
+from enum import Enum
+from typing import Optional
+from functools import wraps
 from dataclasses import dataclass
 
 from hype import *
@@ -5,103 +8,72 @@ from hype import *
 from grimoire import Grimoire, default_template, link
 
 
+def make_decorator(f):
+    '''A simple decorator for creating more decorators'''
+    @wraps(f)
+    def outter(g):
+        @wraps(g)
+        def inner(*args, **kwds):
+            return f(g, *args, **kwds)
+        return inner
+    return outter
+
+
+class Choice(Enum):
+    ROCK = 'rock'
+    PAPER = 'paper'
+    SCISSORS = 'scissors'
+
+
 @dataclass
 class State:
-    rope: bool = False
-    axe: bool = False
-    torch: bool = False
-
-
-app = Grimoire(state=State)
+    choice: Optional[Choice] = None
 
 
 default_template = default_template("Minimal Example")
 
 
-@app.begin
+app = Grimoire(State)
+
+
+@app.page(start=True)
 @default_template
-def start(state, *opts):
-    return '''You\'re adventure has begun. Choose one of the
-    following items to help complete your quest.''', state
+def begin(state, rock, paper, scissors):
+    return f'Choose {link("rock", rock)}, {link("paper", paper)}, or {link("scissors", scissors)}.', [
+        ('Choose Rock', rock),
+        ('Choose Paper', paper),
+        ('Choose Scissors', scissors)
+    ], state
 
 
-def update_item(item):
-    def updater(state):
-        setattr(state, item, True)
-        return state
-    return updater
-
-
-@start.option("A rope", update=update_item('rope'))
-@start.option("An axe", update=update_item('axe'))
-@start.option("A torch", update=update_item('torch'))
+@make_decorator
 @default_template
-def choose_item(state, item, boulder):
-    if state.rope:
-        item_name = 'a rope'
-    elif state.axe:
-        item_name = 'an axe'
-    else:
-        item_name = 'a torch'
-    return Div(
-        P(f"Congratulations, you have chosen {item_name}."),
-        P(
-            f"""You are standing in front of a deep chasm. You must cross it to
-            continue your quest. You feel uneasy as you peer over the edge. 
-            To your left you see a large {link(boulder, 'boulder')}. You squint
-            and think you might see some writing in it."""
-        )
-    ), state
+def choice(f, state, begin):
+    state = f(state, begin)
+    choice = state.choice
+    state= State()
+    return f'You chose {choice.value}', [('Start Over', begin)], state
 
 
-@choose_item.option('Use you rope', condition=lambda s: s.rope == True)
-@default_template
-def use_rope(state, *opts):
-    return """You tie rope around the trunk of a dead tree near the edge
-    of the chasm. You attempt to throw the end of the rope to the otherside
-    hoping it will safely hook onto something on the other end. 
-    You rope isn't long enough and you realize this wasn't probably a
-    very good idea anyways. Now what?""", state
+@app.page()
+@choice
+def rock(state, begin):
+    state.choice = Choice.ROCK
+    return state
 
 
-@choose_item.option('Use you axe', condition=lambda s: s.axe == True)
-@default_template
-def use_axe(state, *opts):
-    return """You hold your axe in your hand and. "If only there was a way
-    to chop myself to the otherside", you think.""", state
+@app.page()
+@choice
+def paper(state, begin):
+    state.choice = Choice.PAPER
+    return state
 
 
-@choose_item.option('Use you torch', condition=lambda s: s.torch == True)
-@default_template
-def use_torch(state, *opts):
-    return """You wave your torch over the chasm hoping to see the bottom. It cast shadows
-    which bounce down the endless walls but never reveal the floor""", state
-
-
-@choose_item.option('Examine the boulder')
-@use_rope.option('Examine the boulder')
-@use_axe.option('Examine the boulder')
-@use_torch.option('Examine the boulder')
-@default_template
-def examine_boulder(state, *opts):
-    return Div(
-        P(
-            """You examine the boulder. It looks like a map. The writing
-            is worn but you think you can make it out."""
-        ),
-        Div(Pre(
-            """To cross the crack, to make it back
-to where
-            
-            """
-        ))
-    ), state
-
-
-
-
-# default/custom template
-# template reuse
+@app.page()
+@choice
+def scissors(state, begin):
+    state.choice = Choice.SCISSORS
+    return state
 
 
 if __name__ == '__main__':
