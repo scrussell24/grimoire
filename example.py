@@ -3,7 +3,7 @@ from functools import wraps
 from dataclasses import dataclass
 
 
-from grimoire import Grimoire, Option, link
+from grimoire import Grimoire, link
 
 from hype import *
 
@@ -27,8 +27,8 @@ def make_decorator(f):
 
 
 @make_decorator
-def base(fn, state: State, *opts: List[Option]) -> Tuple[Element, State]:
-    content, state = fn(state, *opts)
+def base(fn, state: State, *opts: List[int]) -> Tuple[Element, State]:
+    content, options, state = fn(state, *opts)
     return Doc(
       Html(
         Head(
@@ -41,7 +41,7 @@ def base(fn, state: State, *opts: List[Option]) -> Tuple[Element, State]:
             ),
             Div(
               content,
-              Div(Ul(*[Li(link(o)) for o in opts]), _class="options"),
+              Div(Ul(*[Li(link(o[0], o[1])) for o in options]), _class="options"),
               _class="grid__content"
             ),
             Div(_class="grid__right"),
@@ -53,8 +53,8 @@ def base(fn, state: State, *opts: List[Option]) -> Tuple[Element, State]:
 
 
 @make_decorator
-def inventory(fn, state: State, *opts: List[Option]) -> Tuple[Element, State]:
-    content, state = fn(state, *opts)
+def inventory(fn, state: State, *opts: List[int]) -> Tuple[Element, State]:
+    content, options, state = fn(state, *opts)
     inv = Ul()
     inv.append(Li(f"Water: {state.water}")) if state.water else ""
     inv.append(Li(f" Ore: {state.ore}")) if state.ore else ""
@@ -66,96 +66,105 @@ def inventory(fn, state: State, *opts: List[Option]) -> Tuple[Element, State]:
             inv,
             _class="content_grid__right"),
         _class="content_grid"
-    ), state
+    ), options, state
 
 
 app = Grimoire(state=State)
 
 
-@app.begin
+@app.page(start=True)
 @base
 @inventory
 def start(
     state: State,
-    west: Option,
-    north: Option,
-    east: Option,
-    south: Option
+    west: int,
+    north: int,
+    east: int,
+    south: int
 ) -> Tuple[Element, State]:
     state = State()
     return Div(
         P("You have crash landed on an alien planet."),
         P("To fix your spaceship and escape, you need to scavenge three resources from the planet's surface: water, ore, and organic material."),
-        P(f"You stand facing {link(west, 'west')} and see a vast ocean. Turning clockwise, you gaze up at the rising peaks of a mountain range to the {link(north, 'north')}. Continuing {link(east, 'east')}, a forest of tree like structures stretches to the horizon and transitions into a lifeless desert to the {link(south, 'south')}.")
-    ), state
+        P(f"You stand facing {link('west', west)} and see a vast ocean. Turning clockwise, you gaze up at the rising peaks of a mountain range to the {link('north', north)}. Continuing {link('east', east)}, a forest of tree like structures stretches to the horizon and transitions into a lifeless desert to the {link('south', south)}.")
+    ), [
+        ("Head West", west),
+        ("Head North", north),
+        ("Head East", east),
+        ("Head South", south)
+    ], state
     
 
-@start.option("Head west")
+@app.page()
 @base
 @inventory
-def west(state: State, *opts: List[Option]) -> Tuple[str, State]:
+def west(state: State, landing_site: int) -> Tuple[str, State]:
     state.water = 1
     return Div(
         P("You stand on the beach of a large ocean. You notice the lack of waves. No moon, you think"),
         P("You collect water.")
-    ), state
+    ), [("Head back to the landing site", landing_site)], state
 
 
-@start.option("Head north")
+@app.page()
 @base
 @inventory
-def north(state: State, *opts: List[Option]) -> Tuple[str, State]:
+def north(state: State, landing_site: int) -> Tuple[str, State]:
     state.ore = 1
     return Div(
         P("You head north and find yourself at the foothills of the mountains."),
         P("You find a metalic mineral and mine ore.")
-    ), state
+    ), [("Head back to the landing site", landing_site)], state
 
 
-@start.option("Head east")
+@app.page()
 @base
 @inventory
-def east(state: State, *opts: List[Option]) -> Tuple[str, State]:
+def east(state: State, landing_site: int) -> Tuple[str, State]:
     state.organics = 1
     return Div(
         P("You head east, towards what looks like a temperate forest. These aren't quite trees, but they almost certainly qualifiy as life and provide a nice shade from the midday sun."),
         P("You extract a sap like substance from the structures. It's a perfect substitute for the organic molecules you are looking for.")
-    ), state
+    ), [("Head back to the landing site", landing_site)], state
 
 
-@start.option("Head south")
+@app.page()
 @base
 @inventory
-def south(state, *opts: List[Option]):
+def south(state: State, start: int):
+    state = State()
     return Div(
         P("You head south towards the lifeless desert. You take the last swig of water from your canteen and collapse to the sand. There's no way you can make it back to your ship. You have died.")
-    ), state
+    ), [("Start Over", start)], state
 
 
-@west.option("Head back to the landing site")
-@north.option("Head back to the landing site")
-@east.option("Head back to the landing site")
+@app.page()
 @base
 @inventory
-def landing_site(state: State, *opts: List[Option]) -> Tuple[str, State]:
+def landing_site(
+    state: State,
+    start: int,
+    west: int,
+    north: int,
+    east: int,
+    south: int
+) -> Tuple[str, State]:
     if (state.water and state.ore and state.organics):
+        state = State()
         return Div(
             P("You have all of the materials you need to fix your ship."),
             P("After hours of work, you are ready to take off."),
             P("Good luck traveller.")
-        ), state
+        ), [("Start Over", start)], state
 
     return Div(
         P("You arrive back at the crash site. You survey your ship. You still don't have the parts to fix it.")
-    ), state
-
-
-south.option("Start Over")(start)
-landing_site.option("Head west", condition=lambda s: not s.water or not s.ore or not s.organics)(west)
-landing_site.option("Head north", condition=lambda s: not s.water or not s.ore or not s.organics)(north)
-landing_site.option("Head east", condition=lambda s: not s.water or not s.ore or not s.organics)(east)
-landing_site.option("Head south", condition=lambda s: not s.water or not s.ore or not s.organics)(south)
-landing_site.option("Play again", condition=lambda s: s.water and s.ore and s.organics)(start)
+    ), [
+        ("Head West", west),
+        ("Head North", north),
+        ("Head East", east),
+        ("Head South", south)
+    ], state
 
 
 CSS = '''body {
@@ -175,7 +184,7 @@ li {
 }
 
 a {
-    color: #192f50;
+    color: #4444aa;
     text-decoration: none;
 }
 
