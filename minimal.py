@@ -1,6 +1,5 @@
 from enum import Enum
 from typing import Optional
-from functools import wraps
 from dataclasses import dataclass
 
 from hype import *
@@ -18,18 +17,26 @@ class Choice(Enum):
 
 @dataclass
 class State:
+    round: int = 0
     choice: Optional[Choice] = None
 
 
-default_page = default_page("Minimal Example")
+page = default_page("RPS")
 
 
 app = Grimoire(State)
 
 
 @app.page(start=True)
-@default_page
+@page
 def begin(state, rock, paper, scissors):
+
+    if state.round <= 10:
+        state.round += 1
+
+    if state.round >= 10:
+        return 'Game Over', [], state
+
     return f'Choose {link("rock", rock)}, {link("paper", paper)}, or {link("scissors", scissors)}.', [
         ('Choose Rock', rock),
         ('Choose Paper', paper),
@@ -38,11 +45,10 @@ def begin(state, rock, paper, scissors):
 
 
 @make_decorator
-@default_page
+@page
 def choice(f, state, begin):
     state = f(state, begin)
     choice = state.choice
-    state= State()
     return f'You chose {choice.value}', [('Start Over', begin)], state
 
 
