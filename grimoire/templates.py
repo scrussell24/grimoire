@@ -2,7 +2,7 @@ from typing import List
 
 from grimoire.utils import make_decorator
 
-from hype import *
+from hype import Doc, Html, Head, Title, Body, Div, Ul, Li
 
 
 def link(text, option_hash):

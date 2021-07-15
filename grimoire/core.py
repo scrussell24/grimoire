@@ -32,7 +32,8 @@ class Page:
                 if name in params.keys():
                     options.append(page)
 
-            # render with the state so we can render the children (we're going to have to do this again)
+            # render with the state so we can render the
+            # children (we're going to have to do this again)
             _, new_state = self.fn(copy(state), *["" for _ in range(len(params) - 1)])
 
             # render the children

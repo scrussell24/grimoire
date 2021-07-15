@@ -4,9 +4,10 @@ build/
 __pycache__/
 launch.json
 TODO.md
-example*
+example
 grimoire_if.egg-info
 dist/
 site/
 tutorial/
 example/
+.coverage

@@ -4,9 +4,9 @@ from dataclasses import dataclass
 
 from hype import *
 
-from grimoire import Grimoire
-from grimoire.utils import make_decorator
-from grimoire.templates import default_page, link
+from ..grimoire import Grimoire
+from ..grimoire.utils import make_decorator
+from ..grimoire.templates import default_page, link
 
 
 class Choice(Enum):

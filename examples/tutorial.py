@@ -1,8 +1,8 @@
 from typing import *
 from dataclasses import dataclass
 
-from grimoire import Grimoire
-from grimoire.utils import make_decorator
+from ..grimoire import Grimoire
+from ..grimoire.utils import make_decorator
 
 from hype import *
 from pygments import highlight
