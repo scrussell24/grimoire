@@ -1,44 +1,106 @@
+from dataclasses import dataclass
+
+from hype import *
+
 from grimoire import Grimoire, default_template, link
 
 
-app = Grimoire()
+@dataclass
+class State:
+    rope: bool = False
+    axe: bool = False
+    torch: bool = False
 
 
-@app.page(start=True)
+app = Grimoire(state=State)
+
+
+default_template = default_template("Minimal Example")
+
+
+@app.begin
 @default_template
-def start(state, *opts):
-    state = {}
-    return 'You ', state
+def start(state, page_hash, *opts):
+    return '''You\'re adventure has begun. Choose one of the
+    following items to help complete your quest.''', state
 
 
-@start.option("test")
-@default_template
-def test(state, red, blue, green):
-    return f'Choose a color: {link(green, "green")}, {link(red, "red")}, {link(blue, "blue")}', state
-
-
-def update_color(color):
+def update_item(item):
     def updater(state):
-        state['color'] = color
+        setattr(state, item, True)
         return state
     return updater
 
 
-@test.option('choose green', update=update_color('green'))
-@test.option('choose blue',  update=update_color('blue'))
-@test.option('choose red',  update=update_color('red'))
+@start.option("A rope", update=update_item('rope'))
+@start.option("An axe", update=update_item('axe'))
+@start.option("A torch", update=update_item('torch'))
 @default_template
-def chose_color(state, *opts):
-    return f'You chose {state["color"]}', state
+def choose_item(state, item, boulder):
+    if state.rope:
+        item_name = 'a rope'
+    elif state.axe:
+        item_name = 'an axe'
+    else:
+        item_name = 'a torch'
+    return Div(
+        P(f"Congratulations, you have chosen {item_name}."),
+        P(
+            f"""You are standing in front of a deep chasm. You must cross it to
+            continue your quest. You feel uneasy as you peer over the edge. 
+            To your left you see a large {link(boulder, 'boulder')}. You squint
+            and think you might see some writing in it."""
+        )
+    ), state
 
 
-chose_color.option('Start Over')(start)
+@choose_item.option('Use you rope', condition=lambda s: s.rope == True)
+@default_template
+def use_rope(state, *opts):
+    return """You tie rope around the trunk of a dead tree near the edge
+    of the chasm. You attempt to throw the end of the rope to the otherside
+    hoping it will safely hook onto something on the other end. 
+    You rope isn't long enough and you realize this wasn't probably a
+    very good idea anyways. Now what?""", state
 
 
-# State class
+@choose_item.option('Use you axe', condition=lambda s: s.axe == True)
+@default_template
+def use_axe(state, *opts):
+    return """You hold your axe in your hand and. "If only there was a way
+    to chop myself to the otherside", you think.""", state
+
+
+@choose_item.option('Use you torch', condition=lambda s: s.torch == True)
+@default_template
+def use_torch(state, *opts):
+    return """You wave your torch over the chasm hoping to see the bottom. It cast shadows
+    which bounce down the endless walls but never reveal the floor""", state
+
+
+@choose_item.option('Examine the boulder')
+@use_rope.option('Examine the boulder')
+@use_axe.option('Examine the boulder')
+@use_torch.option('Examine the boulder')
+@default_template
+def examine_boulder(state, *opts):
+    return Div(
+        P(
+            """You examine the boulder. It looks like a map. The writing
+            is worn but you think you can make it out."""
+        ),
+        Div(Pre(
+            """To cross the crack, to make it back
+to where
+            
+            """
+        ))
+    ), state
+
+
+
+
 # default/custom template
-# link
-# type hints
 # template reuse
 
 

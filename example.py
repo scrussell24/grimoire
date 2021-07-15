@@ -36,15 +36,19 @@ def base(fn, state: State, *opts: List[Option]) -> Tuple[Element, State]:
         ),
         Body(
           Div(
-              Div(_class="grid__left"),
-              Div(
-                  content,
-                  Div(Ul(*[Li(link(o)) for o in opts]), _class="options"),
-                  _class="grid__content"),
-              Div(_class="grid__right"),
-              _class="grid")
+            Div(
+              _class="grid__left"
+            ),
+            Div(
+              content,
+              Div(Ul(*[Li(link(o)) for o in opts]), _class="options"),
+              _class="grid__content"
+            ),
+            Div(_class="grid__right"),
+            _class="grid"
+          )
         )
-      )     
+      )
     ), state
 
 
@@ -68,7 +72,7 @@ def inventory(fn, state: State, *opts: List[Option]) -> Tuple[Element, State]:
 app = Grimoire(state=State)
 
 
-@app.page(start=True)
+@app.begin
 @base
 @inventory
 def start(
@@ -82,7 +86,7 @@ def start(
     return Div(
         P("You have crash landed on an alien planet."),
         P("To fix your spaceship and escape, you need to scavenge three resources from the planet's surface: water, ore, and organic material."),
-        P(f"You stand facing {link(west, 'west')} and see a vast ocean. Turning clockwise, you gaze up at the rising peaks of a mountain range to the {link(north, 'north')}. Continuing {Link(east, 'east')}, a forest of tree like structures stretches to the horizon and transitions into a lifeless desert to the {Link(south, 'south')}.")
+        P(f"You stand facing {link(west, 'west')} and see a vast ocean. Turning clockwise, you gaze up at the rising peaks of a mountain range to the {link(north, 'north')}. Continuing {link(east, 'east')}, a forest of tree like structures stretches to the horizon and transitions into a lifeless desert to the {link(south, 'south')}.")
     ), state
     
 
@@ -210,7 +214,7 @@ a {
     height: 200px;
 }
 
- @media screen and (max-width: 1000px) {
+@media screen and (max-width: 1000px) {
     .grid {
         grid-template-columns: 0fr 10fr 0fr;
     }

@@ -17,17 +17,27 @@ def link(opt: Option, text: Optional[str] = None):
         return A(text, href=f'{opt.hash}.html')  
 
 
-@make_decorator
-def default_template(fn, state: str, *opts: List[Option]):
-    content, state = fn(state, *opts)
-    return Doc(
-        Html(
-            Body(
-                Div(content),
-                Ul(*[Li(link(o)) for o in opts])
-            )
-        )     
-    ), state   
+def internal_link(opt: Option, text: Optional[str] = None):
+        text = text if text else opt.text
+        return A(text, href=f'#{opt.hash}')  
+
+
+def default_template(title):
+    @make_decorator
+    def inner(fn, state: str, *opts: List[Option]):
+        content, state = fn(state, *opts)
+        return Doc(
+            Html(
+                Head(
+                    Title(title)
+                ),
+                Body(
+                    Div(content),
+                    Ul(*[Li(link(o)) for o in opts])
+                )
+            )     
+        ), state   
+    return inner
 
 
 class Page:
@@ -57,7 +67,7 @@ class Page:
         # run update function
         state = self.update(state)
 
-        page_hash = f'{hash(hash(self) + hash(str(state)))}'
+        page_hash = f'{abs(hash(hash(self) + hash(str(state))))}'
         if page_hash not in self.cache:
             self.cache.append(page_hash)
             params = signature(self.fn).parameters
