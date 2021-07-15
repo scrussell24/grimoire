@@ -1,5 +1,7 @@
-hype-html
 pytest
+black
+
+hype-html
 wheel
 twine
 pygments

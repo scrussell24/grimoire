@@ -10,9 +10,9 @@ from grimoire.templates import default_page, link
 
 
 class Choice(Enum):
-    ROCK = 'rock'
-    PAPER = 'paper'
-    SCISSORS = 'scissors'
+    ROCK = "rock"
+    PAPER = "paper"
+    SCISSORS = "scissors"
 
 
 @dataclass
@@ -35,13 +35,13 @@ def begin(state, rock, paper, scissors):
         state.round += 1
 
     if state.round >= 10:
-        return 'Game Over', [], state
+        return "Game Over", [], state
 
-    return f'Choose {link("rock", rock)}, {link("paper", paper)}, or {link("scissors", scissors)}.', [
-        ('Choose Rock', rock),
-        ('Choose Paper', paper),
-        ('Choose Scissors', scissors)
-    ], state
+    return (
+        f'Choose {link("rock", rock)}, {link("paper", paper)}, or {link("scissors", scissors)}.',
+        [("Choose Rock", rock), ("Choose Paper", paper), ("Choose Scissors", scissors)],
+        state,
+    )
 
 
 @make_decorator
@@ -49,7 +49,7 @@ def begin(state, rock, paper, scissors):
 def choice(f, state, begin):
     state = f(state, begin)
     choice = state.choice
-    return f'You chose {choice.value}', [('Start Over', begin)], state
+    return f"You chose {choice.value}", [("Start Over", begin)], state
 
 
 @app.page()
@@ -73,5 +73,5 @@ def scissors(state, begin):
     return state
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.render()
