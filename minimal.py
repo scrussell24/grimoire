@@ -5,7 +5,8 @@ from dataclasses import dataclass
 
 from hype import *
 
-from grimoire import Grimoire, default_template, link
+from grimoire import Grimoire
+from grimoire.templates import default_template, link
 
 
 def make_decorator(f):

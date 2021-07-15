@@ -3,7 +3,8 @@ from functools import wraps
 from dataclasses import dataclass
 
 
-from grimoire import Grimoire, link
+from grimoire import Grimoire
+from grimoire.templates import link
 
 from hype import *
 

@@ -1,36 +1,9 @@
 import os
 from copy import copy
-from typing import List
 from inspect import signature
-
-from hype import *
-
-from grimoire.utils import make_decorator
 
 
 os.environ['PYTHONHASHSEED'] = "0"
-
-
-def link(text, option_hash):
-        return A(text, href=f'{option_hash}.html')  
-
-
-def default_template(title: str):
-    @make_decorator
-    def inner(fn, state: str, *opts: List[Option]):
-        content, options, state = fn(state, *opts)
-        return Doc(
-            Html(
-                Head(
-                    Title(title)
-                ),
-                Body(
-                    Div(content),
-                    Ul(*[Li(link(o[0], o[1])) for o in options])
-                )
-            )     
-        ), state   
-    return inner
 
 
 class Page:
@@ -66,8 +39,7 @@ class Page:
             child_hashes = []
             for page in options:
                 child_hash = page.render(copy(new_state), pages, path, start=False)
-                if child_hash:
-                    child_hashes.append(child_hash)
+                child_hashes.append(child_hash)
             
             # render this page again with the correct children hashes
             content, state = self.fn(copy(state), *child_hashes)
@@ -102,5 +74,7 @@ class Grimoire:
         return inner
 
     def render(self, path="site/"):
+        if not self.start:
+            raise Exception('No start page set. Make sure to add a start=True argument to your first page.')
         state = self.state_class() if self.state_class else {}
         self.start.render(state, self.pages, path)
