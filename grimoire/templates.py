@@ -9,7 +9,7 @@ def link(text, option_hash):
         return A(text, href=f'{option_hash}.html')  
 
 
-def default_template(title: str):
+def default_page(title: str):
     @make_decorator
     def inner(fn, state: str, *opts: List[int]):
         content, options, state = fn(state, *opts)

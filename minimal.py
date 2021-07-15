@@ -6,18 +6,8 @@ from dataclasses import dataclass
 from hype import *
 
 from grimoire import Grimoire
-from grimoire.templates import default_template, link
-
-
-def make_decorator(f):
-    '''A simple decorator for creating more decorators'''
-    @wraps(f)
-    def outter(g):
-        @wraps(g)
-        def inner(*args, **kwds):
-            return f(g, *args, **kwds)
-        return inner
-    return outter
+from grimoire.utils import make_decorator
+from grimoire.templates import default_page, link
 
 
 class Choice(Enum):
@@ -31,14 +21,14 @@ class State:
     choice: Optional[Choice] = None
 
 
-default_template = default_template("Minimal Example")
+default_page = default_page("Minimal Example")
 
 
 app = Grimoire(State)
 
 
 @app.page(start=True)
-@default_template
+@default_page
 def begin(state, rock, paper, scissors):
     return f'Choose {link("rock", rock)}, {link("paper", paper)}, or {link("scissors", scissors)}.', [
         ('Choose Rock', rock),
@@ -48,7 +38,7 @@ def begin(state, rock, paper, scissors):
 
 
 @make_decorator
-@default_template
+@default_page
 def choice(f, state, begin):
     state = f(state, begin)
     choice = state.choice

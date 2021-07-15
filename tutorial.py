@@ -3,6 +3,7 @@ from functools import wraps
 from dataclasses import dataclass
 
 from grimoire import Grimoire
+from grimoire.utils import make_decorator
 
 from hype import *
 from pygments import highlight
@@ -13,17 +14,6 @@ from pygments.lexers import PythonLexer, BashLexer
 @dataclass
 class State:
     test: Optional[str] = None
-
-
-def make_decorator(f):
-    '''A simple decorator for creating more decorators'''
-    @wraps(f)
-    def outter(g):
-        @wraps(g)
-        def inner(*args, **kwds):
-            return f(g, *args, **kwds)
-        return inner
-    return outter
 
 
 @make_decorator
