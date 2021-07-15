@@ -20,7 +20,7 @@ default_template = default_template("Minimal Example")
 
 @app.begin
 @default_template
-def start(state, page_hash, *opts):
+def start(state, *opts):
     return '''You\'re adventure has begun. Choose one of the
     following items to help complete your quest.''', state
 
