@@ -54,7 +54,7 @@ def base(fn, state: State, *opts: List[int]) -> Tuple[Element, State]:
 
 
 @make_decorator
-def inventory(fn, state: State, *opts: List[int]) -> Tuple[Element, State]:
+def inventory(fn, state: State, *opts: List[int]) -> Tuple[Element, List[Tuple[str, int]], State]:
     content, options, state = fn(state, *opts)
     inv = Ul()
     inv.append(Li(f"Water: {state.water}")) if state.water else ""
@@ -82,7 +82,7 @@ def start(
     north: int,
     east: int,
     south: int
-) -> Tuple[Element, State]:
+) -> Tuple[Element, List[Tuple[str, int]], State]:
     state = State()
     return Div(
         P("You have crash landed on an alien planet."),
@@ -99,7 +99,7 @@ def start(
 @app.page()
 @base
 @inventory
-def west(state: State, landing_site: int) -> Tuple[str, State]:
+def west(state: State, landing_site: int) -> Tuple[str, List[Tuple[str, int]], State]:
     state.water = 1
     return Div(
         P("You stand on the beach of a large ocean. You notice the lack of waves. No moon, you think"),
@@ -110,7 +110,7 @@ def west(state: State, landing_site: int) -> Tuple[str, State]:
 @app.page()
 @base
 @inventory
-def north(state: State, landing_site: int) -> Tuple[str, State]:
+def north(state: State, landing_site: int) -> Tuple[str, List[Tuple[str, int]], State]:
     state.ore = 1
     return Div(
         P("You head north and find yourself at the foothills of the mountains."),
@@ -121,7 +121,7 @@ def north(state: State, landing_site: int) -> Tuple[str, State]:
 @app.page()
 @base
 @inventory
-def east(state: State, landing_site: int) -> Tuple[str, State]:
+def east(state: State, landing_site: int) -> Tuple[str, List[Tuple[str, int]], State]:
     state.organics = 1
     return Div(
         P("You head east, towards what looks like a temperate forest. These aren't quite trees, but they almost certainly qualifiy as life and provide a nice shade from the midday sun."),
@@ -132,7 +132,7 @@ def east(state: State, landing_site: int) -> Tuple[str, State]:
 @app.page()
 @base
 @inventory
-def south(state: State, start: int):
+def south(state: State, start: int) -> Tuple[str, List[Tuple[str, int]], State]:
     state = State()
     return Div(
         P("You head south towards the lifeless desert. You take the last swig of water from your canteen and collapse to the sand. There's no way you can make it back to your ship. You have died.")
@@ -149,7 +149,7 @@ def landing_site(
     north: int,
     east: int,
     south: int
-) -> Tuple[str, State]:
+) -> Tuple[str, List[Tuple[str, int]], State]:
     if (state.water and state.ore and state.organics):
         state = State()
         return Div(
