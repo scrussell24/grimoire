@@ -7,21 +7,21 @@ os.environ['PYTHONHASHSEED'] = "0"
 
 
 class Page:
-
     def __init__(self, fn):
         self.fn = fn
         self.cache = []
 
     def render(self, state, pages, path, start=True):
         
-        # clear out the site dir
+        # clear out the dir
         if start:
             for root, _, files in os.walk(path):
                 for file in files:
                     os.remove(os.path.join(root, file))
-        
 
+        # calc page hash
         page_hash = f'{abs(hash(hash(self) + hash(str(state))))}'
+
         if page_hash not in self.cache:
             self.cache.append(page_hash)
 
