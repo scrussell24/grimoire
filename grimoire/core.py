@@ -1,5 +1,6 @@
 import os
 from copy import copy
+from string import Template
 from inspect import signature
 
 
@@ -32,28 +33,28 @@ class Page:
                 if name in params.keys():
                     options.append(page)
 
-            # render with the state so we can render the
-            # children (we're going to have to do this again)
-            _, new_state = self.fn(copy(state), *["" for _ in range(len(params) - 1)])
+            # render, inject the option name which will
+            # be replaced with the actual hash later
+            content, new_state = self.fn(copy(state), *[f"${k}" for k in list(params.keys())[1:]])
 
             # render the children
-            child_hashes = []
+            child_hashes = {}
             for page in options:
                 child_hash = page.render(copy(new_state), pages, path, start=False)
-                child_hashes.append(child_hash)
-
-            # render this page again with the correct children hashes
-            content, state = self.fn(copy(state), *child_hashes)
+                child_hashes[page.fn.__name__] = child_hash
+        
+            template = Template(str(content))
+            content = template.substitute(child_hashes)
 
             # write the file to the build dir
             filename = f"{page_hash}.html"
             with open(f"{path}{filename}", "w") as f:
-                f.write(str(content))
+                f.write(content)
 
             # if it's the first page also write an index file
             if start:
                 with open(f"{path}index.html", "w") as f:
-                    f.write(str(content))
+                    f.write(content)
 
         return page_hash
 

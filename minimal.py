@@ -1,4 +1,5 @@
 from enum import Enum
+from random import choice as rchoice
 from typing import Optional
 from dataclasses import dataclass
 
@@ -18,6 +19,7 @@ class Choice(Enum):
 @dataclass
 class State:
     round: int = 0
+    wins: int = 0
     choice: Optional[Choice] = None
 
 
@@ -31,15 +33,22 @@ app = Grimoire(State)
 @page
 def begin(state, rock, paper, scissors):
 
-    if state.round <= 10:
+    if state.round < 10:
         state.round += 1
 
     if state.round >= 10:
         return "Game Over", [], state
 
     return (
-        f'Choose {link("rock", rock)}, {link("paper", paper)}, or {link("scissors", scissors)}.',
-        [("Choose Rock", rock), ("Choose Paper", paper), ("Choose Scissors", scissors)],
+        Div(
+            P(f'Round: {state.round} Wins: {state.wins}'),
+            P(f'Choose {link("rock", rock)}, {link("paper", paper)}, or {link("scissors", scissors)}.')
+        ),
+        [
+            ("Choose Rock", rock),
+            ("Choose Paper", paper),
+            ("Choose Scissors", scissors)
+        ],
         state,
     )
 
@@ -49,7 +58,34 @@ def begin(state, rock, paper, scissors):
 def choice(f, state, begin):
     state = f(state, begin)
     choice = state.choice
-    return f"You chose {choice.value}", [("Start Over", begin)], state
+    op_choice = rchoice(list(Choice))
+
+    if choice == Choice.PAPER:
+        if op_choice == Choice.ROCK:
+            status = "win"
+            state.wins += 1
+        elif choice == op_choice:
+            status = "draw"
+        else:
+            status = "lose"
+    elif choice == Choice.ROCK:
+        if op_choice == Choice.SCISSORS:
+            status = "win"
+            state.wins += 1
+        elif choice == op_choice:
+            status = "draw"
+        else:
+            status = "lose"
+    else:  # scissors
+        if op_choice == Choice.PAPER:
+            status = "win"
+            state.wins += 1
+        elif choice == op_choice:
+            status = "draw"
+        else:
+            status = "lose"
+
+    return f"You chose {choice.value}. Opponent chose {op_choice.value}. You {status}", [("Play another round", begin)], state
 
 
 @app.page()
