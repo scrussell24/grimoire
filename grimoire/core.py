@@ -12,6 +12,9 @@ class Page:
         self.fn = fn
         self.cache = []
 
+    def page_number(self, page_hash):
+        return f"{self.fn.__name__}_{self.cache.index(page_hash)}"
+
     def render(self, state, pages, path, start=True):
 
         # clear out the dir
@@ -38,16 +41,16 @@ class Page:
             content, new_state = self.fn(copy(state), *[f"${k}" for k in list(params.keys())[1:]])
 
             # render the children
-            child_hashes = {}
+            page_ids = {}
             for page in options:
-                child_hash = page.render(copy(new_state), pages, path, start=False)
-                child_hashes[page.fn.__name__] = child_hash
+                child_page_id = page.render(copy(new_state), pages, path, start=False)
+                page_ids[page.fn.__name__] = child_page_id
         
             template = Template(str(content))
-            content = template.substitute(child_hashes)
+            content = template.substitute(page_ids)
 
             # write the file to the build dir
-            filename = f"{page_hash}.html"
+            filename = f"{self.page_number(page_hash)}.html"
             with open(f"{path}{filename}", "w") as f:
                 f.write(content)
 
@@ -56,7 +59,7 @@ class Page:
                 with open(f"{path}index.html", "w") as f:
                     f.write(content)
 
-        return page_hash
+        return self.page_number(page_hash)
 
 
 class Grimoire:

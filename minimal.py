@@ -85,6 +85,7 @@ def choice(f, state, begin):
         else:
             status = "lose"
 
+    state.choice = None
     return f"You chose {choice.value}. Opponent chose {op_choice.value}. You {status}", [("Play another round", begin)], state
 
 
