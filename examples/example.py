@@ -263,4 +263,4 @@ a {
 
 
 if __name__ == "__main__":
-    app.render(path="example/")
+    app.render()
