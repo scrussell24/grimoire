@@ -1,15 +1,8 @@
 # Grimoire
 
-Grimoire is a Python library to create interactive fiction. What makes Grimoire
-unique is that it pre-renders all possible choices and
-simply outputs hyperlinked Html files. For this reason, I like to think
-of Grimoire as a static interactive fiction generator.
-
-Some advantages of this approach:
-
-* The story's state is encoded in the url (so you can save your progress at anytime by copying the url).
-* Takes full advantage all the browser's built-in features like cacheing, forward/back buttons, etc.
-* Will work even if Javascript is disabled.
+Grimoire is a Python library to create interactive fiction.
+What makes Grimoire unique is that it pre-renders all possible
+choices and simply outputs linked HTML files.
 
 ## Installation
 
@@ -19,10 +12,9 @@ pip install grimoire-if
 
 ## Usage
 
-Check out the full [example](example.py).
+Check out some [examples](examples/).
 
 ### Your story begins
-
 
 Begin by instantiating a Grimoire app.
 
@@ -36,10 +28,10 @@ app = Grimoire()
 Then create our stories initial page.
 
 ```
-@app.start
+@app.page(start=True)
 def start(state):
     state['name'] = 'Grimoire'
-    return f"Hello, {state['name']}!", state
+    return f"Hello, Grimoire!", state
 ```
 
 You can render our (rather boring) story right now by calling the app's render method.
@@ -60,7 +52,7 @@ class State:
 
 app = Grimoire(state=State)
 
-@app.start
+@app.page(start=True)
 def start(state):
     state.name = 'Grimoire'
     return f"Hello, {state.name}!", state
@@ -72,7 +64,7 @@ Grimoire uses [hype](https://github.com/scrussell24/hype-html) to render html an
 from hype import *
 
 
-@app.start
+@app.page(start=True)
 def start(state):
     state.name = 'Grimoire'
     return H1(f"Hello, {state.name}!"), state
@@ -80,12 +72,26 @@ def start(state):
 
 ### Choose your own destiny
 
-Let's add some options.
+Let's add some options. We'll start by creating another page.
 
 ```
-@app.option(start, "Next")
+@app.page()
 def next(state):
     return P("We're really moving now!"), state
 ```
 
-Try rendering again. If you reload the index.html file, you should now see a link (Next) that brings you to the next page.
+Now go back to our first page and another argument, next. We'll import a helper function
+called link from grimoire.tempaltes to construct the link using the option argument.
+
+```
+from grimoire.templates import link
+
+
+@app.page(start=True)
+def start(state, next):
+    state.name = 'Grimoire'
+    return Div(
+        H1(f"Hello, {state.name}!"),
+        link('Next Page', next)
+    ), state
+```
