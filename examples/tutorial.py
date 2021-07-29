@@ -80,7 +80,7 @@ def title(state, install):
         H1("Grimoire"),
         P("A library for creating interactive fiction as linked hypertext."),
         _class="title_page"
-    ), state, None, ("Get Started - Install", install)
+    ), state, None, ("next", install)
 
 
 @app.page()
@@ -91,7 +91,7 @@ def install(state, title, create_app):
         P("Install Grimoire via pip"),
     )
     code = "pip install grimoire-if"
-    return content, code, state, ('previous - Title', title), ('next - Create an app', create_app)
+    return content, code, state, ('previous', title), ('next', create_app)
 
 
 @app.page()
@@ -107,7 +107,7 @@ from grimoire import Grimoire
 
 app = Grimoire()
     """
-    return content, code, state, ('previous - Install', install), ('next - Create a Page', create_page)
+    return content, code, state, ('previous', install), ('next', create_page)
 
 
 @app.page()
@@ -127,7 +127,7 @@ some content to render and a state object."""),
 def start(state):
     return "Hello, Grimoire!", state
     """
-    return content, code, state, ('previous - Create an App', create_app), ('next - Render the App', render_app)
+    return content, code, state, ('previous', create_app), ('next', render_app)
 
 
 @app.page()
@@ -143,7 +143,7 @@ first page. Go ahead and load it into your browser."""),
     code = """
 app.render()
     """
-    return content, code, state, ('previous - Create an App', create_page), ('next - Use Hype to Create Html', use_hype)
+    return content, code, state, ('previous', create_page), ('next', use_hype)
 
 
 @app.page()
@@ -168,7 +168,7 @@ def start(state):
         P("Grimoire!")
     ), state
     """
-    return content, code, state, ('previous - Render the App', render_app), ('next - Add Some Options', add_option)
+    return content, code, state, ('previous', render_app), ('next', add_option)
 
 
 @app.page()
@@ -199,7 +199,7 @@ def second(state):
         P("I'm the second page.")
     ), state
     """
-    return content, code, state, ('previous - Use Hype to Create Html', use_hype), ('next - Manage State', manage_state)
+    return content, code, state, ('previous', use_hype), ('next', manage_state)
 
 
 @app.page()
@@ -227,7 +227,7 @@ def second(state):
         P(f"message: {state['message']}")
     ), state
     """
-    return content, code, state, ('previous - Add Seom Options', add_option), ('next - Add a Custom State Class', state_class)
+    return content, code, state, ('previous', add_option), ('next', state_class)
 
 
 @app.page()
@@ -265,7 +265,7 @@ def second(state):
         P(f"message: {state.message}")
     ), state
     """
-    return content, code, state, ('previous - Manage State', manage_state), ('next - Back to the Beginning', back)
+    return content, code, state, ('previous', manage_state), ('next', back)
 
 
 @app.page()
@@ -292,7 +292,7 @@ def second(state, start):
         Ul(Li(link("Start over", start)))
     ), state
     """
-    return content, code, state, ('previous - Add a Custom State Class', state_class), ('next - Use the Default Page Template', default_template)
+    return content, code, state, ('previous', state_class), ('next', default_template)
 
 
 @app.page()
@@ -327,7 +327,7 @@ def second(state, start):
         P(f"message: {state.message}")
     ), [("Start over", start)], state
     """
-    return content, code, state, ('previous - Back to the Beginning', back), ('next - Next Steps', next_steps)
+    return content, code, state, ('previous', back), ('next', next_steps)
 
 
 @app.page()
@@ -338,7 +338,7 @@ def next_steps(state, default_template, title):
         P("""That's it! You've completed the Grimoire tutoiral. Check out the
 the expamples directory in this repo for more."""),
         _class="title_page"
-    ), state, ("previous - Use the Default Page Template", default_template), ("next - Title", title)
+    ), state, ("previous - Use the Default Page Template", default_template), ('next', title)
 
 
 CSS = """body {
@@ -346,6 +346,8 @@ CSS = """body {
     color: #3d3d3d;
     font-size: 1.2rem;
     font-family: Georgia, 'Times New Roman', Times, serif;
+    padding: 0px;
+    margin: 0px;
 }
 
 h2 {
@@ -440,7 +442,7 @@ a {
 
 
     body {
-        font-size: 1em;
+        font-size: 2.5em;
     }
 }"""
 
