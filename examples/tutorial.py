@@ -21,9 +21,9 @@ def base(fn, state, *opts):
     content, state, previous, next = fn(state, *opts)
     opts_element = Div(_class="options")
     if previous:
-        opts_element.append(Span(link(previous[0], previous[1]), _class="previousious"))
+        opts_element.append(Span(link(previous[0], previous[1]), _class="previous option"))
     if next:
-        opts_element.append(Span(link(next[0], next[1]), _class="next"))
+        opts_element.append(Span(link(next[0], next[1]), _class="next option"))
     return (
         Doc(
             Html(
@@ -402,6 +402,11 @@ li {
 a {
     color: #192f50;
     text-decoration: none;
+    
+}
+
+.option {
+    font-size: 2em;
 }
 
 .grid {
@@ -466,11 +471,11 @@ a {
         grid-template-areas: 
             "left"
             "right";
-        height: 95vh;   
+        height: 90vh;   
     }
 
     .title_page {
-        height: 90vh;
+        height: 87vh;
     }
 
     .header {
