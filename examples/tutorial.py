@@ -27,10 +27,7 @@ def base(fn, state, *opts):
     return (
         Doc(
             Html(
-                Head(
-                    Style(CSS),
-                    Style(HtmlFormatter().get_style_defs(".highlight"))
-                ),
+                Head(Style(CSS), Style(HtmlFormatter().get_style_defs(".highlight"))),
                 Body(
                     Div(
                         Div(_class="grid__left"),
@@ -41,7 +38,7 @@ def base(fn, state, *opts):
                 ),
             )
         ),
-        state
+        state,
     )
 
 
@@ -60,12 +57,13 @@ def code_section(lexer=PythonLexer):
                         _class="content_grid__right",
                     ),
                     _class="content_grid",
-                )
+                ),
             ),
             state,
             previous,
-            next
+            next,
         )
+
     return inner
 
 
@@ -75,12 +73,17 @@ app = Grimoire(state=State)
 @app.page(start=True)
 @base
 def title(state, install):
-    return Div(
-        Div(_class="header"),
-        H1("Grimoire"),
-        P("A library for creating interactive fiction as linked hypertext."),
-        _class="title_page"
-    ), state, None, ("next", install)
+    return (
+        Div(
+            Div(_class="header"),
+            H1("Grimoire"),
+            P("A library for creating interactive fiction as linked hypertext."),
+            _class="title_page",
+        ),
+        state,
+        None,
+        ("next", install),
+    )
 
 
 @app.page()
@@ -91,7 +94,7 @@ def install(state, title, create_app):
         P("Install Grimoire via pip"),
     )
     code = "pip install grimoire-if"
-    return content, code, state, ('previous', title), ('next', create_app)
+    return content, code, state, ("previous", title), ("next", create_app)
 
 
 @app.page()
@@ -107,7 +110,7 @@ from grimoire import Grimoire
 
 app = Grimoire()
     """
-    return content, code, state, ('previous', install), ('next', create_page)
+    return content, code, state, ("previous", install), ("next", create_page)
 
 
 @app.page()
@@ -115,11 +118,15 @@ app = Grimoire()
 def create_page(state, create_app, render_app):
     content = Div(
         H2("Create your first page"),
-        P("""Pages are simply functions decorated by a Grimoire app's .page method.
-For your first page, pass the start keyword start=True"""),
-        P("""Notice how the first, and only, argument of our page function is start. We'll get more into that 
+        P(
+            """Pages are simply functions decorated by a Grimoire app's .page method.
+For your first page, pass the start keyword start=True"""
+        ),
+        P(
+            """Notice how the first, and only, argument of our page function is start. We'll get more into that 
 later but it's important to always include it as the first argument. Every page function also must return 
-some content to render and a state object."""),
+some content to render and a state object."""
+        ),
     )
     code = """
 
@@ -127,7 +134,7 @@ some content to render and a state object."""),
 def start(state):
     return "Hello, Grimoire!", state
     """
-    return content, code, state, ('previous', create_app), ('next', render_app)
+    return content, code, state, ("previous", create_app), ("next", render_app)
 
 
 @app.page()
@@ -135,15 +142,19 @@ def start(state):
 def render_app(state, create_page, use_hype):
     content = Div(
         H2("Render the App"),
-        P("""You are ready to render the app. Of course, there isn't much to our story yet.
+        P(
+            """You are ready to render the app. Of course, there isn't much to our story yet.
 Rendering should create a site/ directory with an index.html file associated with our
-first page. Go ahead and load it into your browser."""),
-        P("As we go through each step, render the app and explore the chages we've made.")
+first page. Go ahead and load it into your browser."""
+        ),
+        P(
+            "As we go through each step, render the app and explore the chages we've made."
+        ),
     )
     code = """
 app.render()
     """
-    return content, code, state, ('previous', create_page), ('next', use_hype)
+    return content, code, state, ("previous", create_page), ("next", use_hype)
 
 
 @app.page()
@@ -151,11 +162,15 @@ app.render()
 def use_hype(state, render_app, add_option):
     content = Div(
         H2("Use Hype"),
-        P("""The content your page function returns is rendered using Python's built-in str method. So you
-can include html directly in a string if you'd like."""),
-        P(f"""Alternativley, Grimoire comes with a small library for creating html called 
+        P(
+            """The content your page function returns is rendered using Python's built-in str method. So you
+can include html directly in a string if you'd like."""
+        ),
+        P(
+            f"""Alternativley, Grimoire comes with a small library for creating html called 
 {A("hype", href="https://github.com/scrussell24/hype-html", _class="content-link")}.
-Import hype's classes and create html using only Python!"""),
+Import hype's classes and create html using only Python!"""
+        ),
     )
     code = """
 from hype import *
@@ -168,7 +183,7 @@ def start(state):
         P("Grimoire!")
     ), state
     """
-    return content, code, state, ('previous', render_app), ('next', add_option)
+    return content, code, state, ("previous", render_app), ("next", add_option)
 
 
 @app.page()
@@ -176,10 +191,14 @@ def start(state):
 def add_option(state, use_hype, manage_state):
     content = Div(
         H2("Add Options"),
-        P("""To add an option, create another page function (we don't need start=True this time). Add an argument to any
+        P(
+            """To add an option, create another page function (we don't need start=True this time). Add an argument to any
 page that with to link to the new page with the same name as the page function. Use Girmoire's builtin link function to create
-a link to the page."""),
-        P("""You can add as many options as you like by continuing to add arguments.""")
+a link to the page."""
+        ),
+        P(
+            """You can add as many options as you like by continuing to add arguments."""
+        ),
     )
     code = """
 from grimoire.templates import link
@@ -199,7 +218,7 @@ def second(state):
         P("I'm the second page.")
     ), state
     """
-    return content, code, state, ('previous', use_hype), ('next', manage_state)
+    return content, code, state, ("previous", use_hype), ("next", manage_state)
 
 
 @app.page()
@@ -207,9 +226,13 @@ def second(state):
 def manage_state(state, add_option, state_class):
     content = Div(
         H2("Manage State"),
-        P("""The state object passed to your page function can be read and 
-updated to manage the state of your application. By default it's a dictionary."""),
-        P("Notice how the we access the message from the first page in the second page.")
+        P(
+            """The state object passed to your page function can be read and 
+updated to manage the state of your application. By default it's a dictionary."""
+        ),
+        P(
+            "Notice how the we access the message from the first page in the second page."
+        ),
     )
     code = """
 @app.page(start=True)
@@ -227,7 +250,7 @@ def second(state):
         P(f"message: {state['message']}")
     ), state
     """
-    return content, code, state, ('previous', add_option), ('next', state_class)
+    return content, code, state, ("previous", add_option), ("next", state_class)
 
 
 @app.page()
@@ -235,8 +258,10 @@ def second(state):
 def state_class(state, manage_state, back):
     content = Div(
         H2("Custom State Class"),
-        P("""Dictionaries are cool but not always the best way to structure our state.
-You can add a custom state class when creating your app.""")
+        P(
+            """Dictionaries are cool but not always the best way to structure our state.
+You can add a custom state class when creating your app."""
+        ),
     )
     code = """
 from dataclasses import dataclass
@@ -265,7 +290,7 @@ def second(state):
         P(f"message: {state.message}")
     ), state
     """
-    return content, code, state, ('previous', manage_state), ('next', back)
+    return content, code, state, ("previous", manage_state), ("next", back)
 
 
 @app.page()
@@ -273,7 +298,9 @@ def second(state):
 def back(state, state_class, default_template):
     content = Div(
         H2("Back to the beginning"),
-        P("""Circular references are easy in Grimoire. Just add the option argument for an eariler page.""")
+        P(
+            """Circular references are easy in Grimoire. Just add the option argument for an eariler page."""
+        ),
     )
     code = """
 @app.page(start=True)
@@ -292,7 +319,7 @@ def second(state, start):
         Ul(Li(link("Start over", start)))
     ), state
     """
-    return content, code, state, ('previous', state_class), ('next', default_template)
+    return content, code, state, ("previous", state_class), ("next", default_template)
 
 
 @app.page()
@@ -300,9 +327,11 @@ def second(state, start):
 def default_template(state, back, next_steps):
     content = Div(
         H2("Default Page"),
-        P("""Grimoire comes packaged with a function to style your page
+        P(
+            """Grimoire comes packaged with a function to style your page
 and render your options by default. It returns a decorator which can be
-applied to your page functions.""")
+applied to your page functions."""
+        ),
     )
     code = """
 from grimoire.templates import default_page
@@ -327,18 +356,25 @@ def second(state, start):
         P(f"message: {state.message}")
     ), [("Start over", start)], state
     """
-    return content, code, state, ('previous', back), ('next', next_steps)
+    return content, code, state, ("previous", back), ("next", next_steps)
 
 
 @app.page()
 @base
 def next_steps(state, default_template, title):
-    return Div(
-        Div(_class="header"),
-        P("""That's it! You've completed the Grimoire tutoiral. Check out the
-the expamples directory in this repo for more."""),
-        _class="title_page"
-    ), state, ("previous", default_template), ('start over', title)
+    return (
+        Div(
+            Div(_class="header"),
+            P(
+                """That's it! You've completed the Grimoire tutoiral. Check out the
+the expamples directory in this repo for more."""
+            ),
+            _class="title_page",
+        ),
+        state,
+        ("previous", default_template),
+        ("start over", title),
+    )
 
 
 CSS = """body {

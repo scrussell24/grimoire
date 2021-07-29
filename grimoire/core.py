@@ -38,14 +38,16 @@ class Page:
 
             # render, inject the option name which will
             # be replaced with the actual hash later
-            content, new_state = self.fn(copy(state), *[f"${k}" for k in list(params.keys())[1:]])
+            content, new_state = self.fn(
+                copy(state), *[f"${k}" for k in list(params.keys())[1:]]
+            )
 
             # render the children
             page_ids = {}
             for page in options:
                 child_page_id = page.render(copy(new_state), pages, path, start=False)
                 page_ids[page.fn.__name__] = child_page_id
-        
+
             template = Template(str(content))
             content = template.substitute(page_ids)
 

@@ -41,14 +41,12 @@ def begin(state, rock, paper, scissors):
 
     return (
         Div(
-            P(f'Round: {state.round} Wins: {state.wins}'),
-            P(f'Choose {link("rock", rock)}, {link("paper", paper)}, or {link("scissors", scissors)}.')
+            P(f"Round: {state.round} Wins: {state.wins}"),
+            P(
+                f'Choose {link("rock", rock)}, {link("paper", paper)}, or {link("scissors", scissors)}.'
+            ),
         ),
-        [
-            ("Choose Rock", rock),
-            ("Choose Paper", paper),
-            ("Choose Scissors", scissors)
-        ],
+        [("Choose Rock", rock), ("Choose Paper", paper), ("Choose Scissors", scissors)],
         state,
     )
 
@@ -86,9 +84,15 @@ def choice(f, state, begin):
             status = "lose"
 
     state.choice = None
-    return (Div(
-        P(f"You chose {choice.value}. Opponent chose {op_choice.value}. You {status}"),
-    ), [("Play another round", begin)], state)
+    return (
+        Div(
+            P(
+                f"You chose {choice.value}. Opponent chose {op_choice.value}. You {status}"
+            ),
+        ),
+        [("Play another round", begin)],
+        state,
+    )
 
 
 @app.page()

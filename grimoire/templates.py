@@ -3,18 +3,7 @@ from string import Template
 
 from grimoire.utils import make_decorator
 
-from hype import (
-    Doc,
-    Html,
-    Head,
-    Style,
-    A,
-    Title,
-    Body,
-    Div,
-    Ul,
-    Li
-)
+from hype import Doc, Html, Head, Style, A, Title, Body, Div, Ul, Li
 
 
 def link(text, option_hash):
@@ -26,7 +15,7 @@ def default_page(
     primary_bg_color: str = "#efefef",
     secondary_bg_color: str = "#e4e4e4",
     font_color: str = "#121212",
-    link_color: str = "#6666bb"
+    link_color: str = "#6666bb",
 ):
     @make_decorator
     def inner(fn, state: str, *opts: List[int]):
@@ -40,10 +29,10 @@ def default_page(
                                 primary_bg_color=primary_bg_color,
                                 secondary_bg_color=secondary_bg_color,
                                 font_color=font_color,
-                                link_color=link_color
+                                link_color=link_color,
                             )
                         ),
-                        Title(title)
+                        Title(title),
                     ),
                     Body(
                         Div(
@@ -51,7 +40,7 @@ def default_page(
                             Div(
                                 content,
                                 Ul(*[Li(link(o[0], o[1])) for o in options]),
-                                _class="grid__content"
+                                _class="grid__content",
                             ),
                             Div(_class="grid__right"),
                             _class="grid",
@@ -72,7 +61,7 @@ body {
     margin: 0px;
     color: $font_color;
     font-size: 2rem;
-    font-family: Garamond, 'Times New Roman', Times, serif; 
+    font-family: Garamond, 'Times New Roman', Times, serif;
     background-color: $primary_bg_color;
 }
 
