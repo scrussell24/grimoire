@@ -446,4 +446,4 @@ a {
 
 
 if __name__ == "__main__":
-    app.render()
+    app.render("tutorial/")
