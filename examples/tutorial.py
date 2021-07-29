@@ -1,4 +1,4 @@
-from typing import *
+from typing import Optional
 from dataclasses import dataclass
 
 from grimoire import Grimoire
@@ -338,7 +338,7 @@ def next_steps(state, default_template, title):
         P("""That's it! You've completed the Grimoire tutoiral. Check out the
 the expamples directory in this repo for more."""),
         _class="title_page"
-    ), state, ("previous - Use the Default Page Template", default_template), ('next', title)
+    ), state, ("previous", default_template), ('start over', title)
 
 
 CSS = """body {
@@ -385,11 +385,12 @@ a {
 }
 
 .title_page {
+    padding: 25px;
     height: 75vh;
 }
 
 .content_grid__left {
-    padding: 20px;
+    padding: 25px;
     background-color: #3d3d3d;
     color: #fefefe;
 }
@@ -429,7 +430,7 @@ a {
         grid-template-areas: 
             "left"
             "right";
-        height: 90vh;   
+        height: 95vh;   
     }
 
     .title_page {
