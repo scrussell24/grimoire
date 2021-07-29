@@ -23,7 +23,7 @@ class State:
     choice: Optional[Choice] = None
 
 
-page = default_page("RPS")
+page = default_page("Rock, Paper, Scissors")
 
 
 app = Grimoire(State)
@@ -86,7 +86,9 @@ def choice(f, state, begin):
             status = "lose"
 
     state.choice = None
-    return f"You chose {choice.value}. Opponent chose {op_choice.value}. You {status}", [("Play another round", begin)], state
+    return (Div(
+        P(f"You chose {choice.value}. Opponent chose {op_choice.value}. You {status}"),
+    ), [("Play another round", begin)], state)
 
 
 @app.page()
