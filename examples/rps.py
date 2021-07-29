@@ -113,4 +113,4 @@ def scissors(state, begin):
 
 
 if __name__ == "__main__":
-    app.render()
+    app.render("docs/rps/")
