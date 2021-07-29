@@ -72,7 +72,7 @@ body {
     margin: 0px;
     color: $font_color;
     font-size: 2rem;
-    font-family: Georgia, 'Times New Roman', Times, serif; 
+    font-family: Garamond, 'Times New Roman', Times, serif; 
     background-color: $primary_bg_color;
 }
 
