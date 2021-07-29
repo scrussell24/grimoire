@@ -23,7 +23,8 @@ def link(text, option_hash):
 
 def default_page(
     title: str,
-    bg_color: str = "#efefef",
+    primary_bg_color: str = "#efefef",
+    secondary_bg_color: str = "#e4e4e4",
     font_color: str = "#121212",
     link_color: str = "#6666bb"
 ):
@@ -36,7 +37,8 @@ def default_page(
                     Head(
                         Style(
                             get_style(
-                                bg_color=bg_color,
+                                primary_bg_color=primary_bg_color,
+                                secondary_bg_color=secondary_bg_color,
                                 font_color=font_color,
                                 link_color=link_color
                             )
@@ -66,10 +68,12 @@ def default_page(
 def get_style(**kwargs):
     tmplt = """
 body {
-    background-color: $bg_color;
+    padding: 0px;
+    margin: 0px;
     color: $font_color;
     font-size: 2rem;
     font-family: Georgia, 'Times New Roman', Times, serif; 
+    background-color: $primary_bg_color;
 }
 
 ul {
@@ -85,9 +89,20 @@ a {
 .grid {
     display: grid;
     grid-template-areas: 'left content right';
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: 1fr 2fr 1fr;
 }
 
+.grid__left, .grid__right {
+    background-color: $secondary_bg_color;
+    height: 100vh;
+}
+
+
+.grid__content {
+    background-color: $primary_bg_color;
+    height: 100vh;
+    padding: 20px;
+}
 
 @media screen and (max-width: 1000px) {
     .grid {
