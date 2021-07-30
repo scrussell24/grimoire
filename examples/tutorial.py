@@ -123,8 +123,8 @@ def create_page(state, create_app, render_app):
 For your first page, pass the start keyword start=True"""
         ),
         P(
-            """Notice how the first, and only, argument of our page function is start. We'll get more into that 
-later but it's important to always include it as the first argument. Every page function also must return 
+            """Notice how the first, and only, argument of our page function is state. We'll get more into that 
+later, but it's important to always include it as the first argument. Every page function also must return 
 some content to render and a state object."""
         ),
     )
@@ -143,9 +143,8 @@ def render_app(state, create_page, use_hype):
     content = Div(
         H2("Render the App"),
         P(
-            """You are ready to render the app. Of course, there isn't much to our story yet.
-Rendering should create a site/ directory with an index.html file associated with our
-first page. Go ahead and load it into your browser."""
+            """You are ready to render the app. Rendering should create a site/ directory with 
+an index.html file associated with our first page. Go ahead and load it into your browser."""
         ),
         P(
             "As we go through each step, render the app and explore the chages we've made."
@@ -153,6 +152,10 @@ first page. Go ahead and load it into your browser."""
     )
     code = """
 app.render()
+
+# optionally pass an alternate path
+
+app.render("docs/")
     """
     return content, code, state, ("previous", create_page), ("next", use_hype)
 
@@ -163,8 +166,9 @@ def use_hype(state, render_app, add_option):
     content = Div(
         H2("Use Hype"),
         P(
-            """The content your page function returns is rendered using Python's built-in str method. So you
-can include html directly in a string if you'd like."""
+            f"""The content your page function returns is rendered using Python's 
+built-in {A("str", href="https://docs.python.org/3/library/functions.html#func-str", _class="content-link")} 
+method. So you can include html directly in a string if you'd like."""
         ),
         P(
             f"""Alternativley, Grimoire comes with a small library for creating html called 
@@ -186,6 +190,7 @@ def start(state):
     return content, code, state, ("previous", render_app), ("next", add_option)
 
 
+# TODO rewrite
 @app.page()
 @code_section(lexer=PythonLexer)
 def add_option(state, use_hype, manage_state):
@@ -259,7 +264,7 @@ def state_class(state, manage_state, back):
     content = Div(
         H2("Custom State Class"),
         P(
-            """Dictionaries are cool but not always the best way to structure our state.
+            """Dictionaries are cool, but often a custom class will make writing our code much more enjoyable.
 You can add a custom state class when creating your app."""
         ),
     )
@@ -301,6 +306,8 @@ def back(state, state_class, default_template):
         P(
             """Circular references are easy in Grimoire. Just add the option argument for an eariler page."""
         ),
+        P("""Warning: Be careful about creating infinite loops. Remember that Grimoire will
+continue rendering pages as long as it's seeing a version of the state it hasn't seen before."""),
     )
     code = """
 @app.page(start=True)
@@ -337,20 +344,23 @@ applied to your page functions."""
 from grimoire.templates import default_page
 
 
-page = default_page("Minimal Example")
-
-
 @app.page(start=True)
-@page
+@default_page("Minimal Example")
 def start(state, second):
     state.message = "Hello, traveller"
     return Div(
         P("Hello, Grimoire!")
     ), [("Go to the second page", second)], state
 
+# Also try changing up some of the colors
 
 @app.page()
-@page
+default_page(
+    "Minimal Example",
+    primary_bg_color="#ff0000",
+    secondary_bg_color="#00ff00"
+    font_color="#bbbbbb"
+)
 def second(state, start):
     return Div(
         P(f"message: {state.message}")
