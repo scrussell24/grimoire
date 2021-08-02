@@ -24,13 +24,13 @@ li {
 }
 
 a {
-    color: #192f50;
+    color: #7777ff;
     text-decoration: none;
     
 }
 
 .option {
-    font-size: 2em;
+    font-size: 1.5em;
 }
 
 .grid {
@@ -51,7 +51,6 @@ a {
 
 .title_page {
     padding: 25px;
-    height: 75vh;
 }
 
 .content_grid__left {
@@ -95,11 +94,7 @@ a {
         grid-template-areas: 
             "left"
             "right";
-        height: 90vh;   
-    }
-
-    .title_page {
-        height: 87vh;
+        height: 95vh;   
     }
 
     .header {
@@ -108,7 +103,7 @@ a {
 
 
     body {
-        font-size: 2.5em;
+        font-size: 2.2em;
     }
 }</style>
     <style>pre { line-height: 125%; }
@@ -204,20 +199,23 @@ applied to your page functions.</p>
             <div class="content_grid__right"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">grimoire.templates</span> <span class="kn">import</span> <span class="n">default_page</span>
 
 
-<span class="n">page</span> <span class="o">=</span> <span class="n">default_page</span><span class="p">(</span><span class="s2">&quot;Minimal Example&quot;</span><span class="p">)</span>
-
-
 <span class="nd">@app</span><span class="o">.</span><span class="n">page</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="nd">@page</span>
+<span class="nd">@default_page</span><span class="p">(</span><span class="s2">&quot;Minimal Example&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">second</span><span class="p">):</span>
     <span class="n">state</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Hello, traveller&quot;</span>
     <span class="k">return</span> <span class="n">Div</span><span class="p">(</span>
         <span class="n">P</span><span class="p">(</span><span class="s2">&quot;Hello, Grimoire!&quot;</span><span class="p">)</span>
     <span class="p">),</span> <span class="p">[(</span><span class="s2">&quot;Go to the second page&quot;</span><span class="p">,</span> <span class="n">second</span><span class="p">)],</span> <span class="n">state</span>
 
+<span class="c1"># Also try changing up some of the colors</span>
 
 <span class="nd">@app</span><span class="o">.</span><span class="n">page</span><span class="p">()</span>
-<span class="nd">@page</span>
+<span class="n">default_page</span><span class="p">(</span>
+    <span class="s2">&quot;Minimal Example&quot;</span><span class="p">,</span>
+    <span class="n">primary_bg_color</span><span class="o">=</span><span class="s2">&quot;#ff0000&quot;</span><span class="p">,</span>
+    <span class="n">secondary_bg_color</span><span class="o">=</span><span class="s2">&quot;#00ff00&quot;</span>
+    <span class="n">font_color</span><span class="o">=</span><span class="s2">&quot;#bbbbbb&quot;</span>
+<span class="p">)</span>
 <span class="k">def</span> <span class="nf">second</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">start</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">Div</span><span class="p">(</span>
         <span class="n">P</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;message: </span><span class="si">{</span><span class="n">state</span><span class="o">.</span><span class="n">message</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>

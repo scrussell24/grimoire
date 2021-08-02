@@ -24,13 +24,13 @@ li {
 }
 
 a {
-    color: #192f50;
+    color: #7777ff;
     text-decoration: none;
     
 }
 
 .option {
-    font-size: 2em;
+    font-size: 1.5em;
 }
 
 .grid {
@@ -51,7 +51,6 @@ a {
 
 .title_page {
     padding: 25px;
-    height: 75vh;
 }
 
 .content_grid__left {
@@ -95,11 +94,7 @@ a {
         grid-template-areas: 
             "left"
             "right";
-        height: 90vh;   
-    }
-
-    .title_page {
-        height: 87vh;
+        height: 95vh;   
     }
 
     .header {
@@ -108,7 +103,7 @@ a {
 
 
     body {
-        font-size: 2.5em;
+        font-size: 2.2em;
     }
 }</style>
     <style>pre { line-height: 125%; }
@@ -196,13 +191,16 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
             <div class="content_grid__left">
               <div>
                 <h2>Render the App</h2>
-                <p>You are ready to render the app. Of course, there isn't much to our story yet.
-Rendering should create a site/ directory with an index.html file associated with our
-first page. Go ahead and load it into your browser.</p>
+                <p>You are ready to render the app. Rendering should create a site/ directory with 
+an index.html file associated with our first page. Go ahead and load it into your browser.</p>
                 <p>As we go through each step, render the app and explore the chages we've made.</p>
               </div>
             </div>
             <div class="content_grid__right"><div class="highlight"><pre><span></span><span class="n">app</span><span class="o">.</span><span class="n">render</span><span class="p">()</span>
+
+<span class="c1"># optionally pass an alternate path</span>
+
+<span class="n">app</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="s2">&quot;docs/&quot;</span><span class="p">)</span>
     
 </pre></div>
 </div>

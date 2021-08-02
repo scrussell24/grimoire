@@ -76,13 +76,15 @@ def title(state, install):
     return (
         Div(
             Div(_class="header"),
-            H1("Grimoire"),
-            P("A library for creating interactive fiction as linked hypertext."),
+            H1("Welcome to the Grimoire Tutorial!"),
+            P("""Grimoire is a Python library for creating interactive fiction as hyperlinked html."""),
+            P(f"""The source code is available on {A("github", href="https://github.com/scrussell24/grimoire")}
+including the source for this {A("tutorial", href="https://github.com/scrussell24/grimoire/blob/main/examples/tutorial.py")}."""),
             _class="title_page",
         ),
         state,
+        ("Get started", install),
         None,
-        ("next", install),
     )
 
 
@@ -90,7 +92,7 @@ def title(state, install):
 @code_section(lexer=BashLexer)
 def install(state, title, create_app):
     content = Div(
-        H2("Install"),
+        H2("Installation"),
         P("Install Grimoire via pip"),
     )
     code = "pip install grimoire-if"
@@ -102,7 +104,7 @@ def install(state, title, create_app):
 def create_app(state, install, create_page):
     content = Div(
         H2("Create an app"),
-        P("Let's create an instance of a Grimoire app."),
+        P("Create an instance of a Grimoire app."),
     )
     code = """
 from grimoire import Grimoire
@@ -118,12 +120,11 @@ app = Grimoire()
 def create_page(state, create_app, render_app):
     content = Div(
         H2("Create your first page"),
-        P(
-            """Pages are simply functions decorated by a Grimoire app's .page method.
-For your first page, pass the start keyword start=True"""
+        P(f"""Pages are functions decorated by a Grimoire app's {I("page")} method.
+For the first page, pass the start keyword argument {I("start=True")}. This will prompt grimoire to
+name the associated html page index.html."""
         ),
-        P(
-            """Notice how the first, and only, argument of our page function is state. We'll get more into that 
+        P(f"""Notice how the first, and only, argument of our page function is {I("state")}. We'll get more into that 
 later, but it's important to always include it as the first argument. Every page function also must return 
 some content to render and a state object."""
         ),
@@ -132,7 +133,7 @@ some content to render and a state object."""
 
 @app.page(start=True)
 def start(state):
-    return "Hello, Grimoire!", state
+    return "This is my first grimoire app.", state
     """
     return content, code, state, ("previous", create_app), ("next", render_app)
 
@@ -142,13 +143,10 @@ def start(state):
 def render_app(state, create_page, use_hype):
     content = Div(
         H2("Render the App"),
-        P(
-            """You are ready to render the app. Rendering should create a site/ directory with 
+        P("""You are ready to render the app. Rendering should create a site/ directory with 
 an index.html file associated with our first page. Go ahead and load it into your browser."""
         ),
-        P(
-            "As we go through each step, render the app and explore the chages we've made."
-        ),
+        P("As we go through each step, render the app and explore the chages we've made."),
     )
     code = """
 app.render()
@@ -168,7 +166,7 @@ def use_hype(state, render_app, add_option):
         P(
             f"""The content your page function returns is rendered using Python's 
 built-in {A("str", href="https://docs.python.org/3/library/functions.html#func-str", _class="content-link")} 
-method. So you can include html directly in a string if you'd like."""
+function. So you can include html directly in a string if you'd like."""
         ),
         P(
             f"""Alternativley, Grimoire comes with a small library for creating html called 
@@ -182,28 +180,24 @@ from hype import *
 @app.page(start=True)
 def start(state):
     return Div(
-        H1("Title"),
-        "<p>Hello, <p>",
-        P("Grimoire!")
+        H1("My First Grimoire Story"),
+        "<p>Inline html as a string<p>",
+        P("Html using the Hype library")
     ), state
     """
     return content, code, state, ("previous", render_app), ("next", add_option)
 
 
-# TODO rewrite
 @app.page()
 @code_section(lexer=PythonLexer)
 def add_option(state, use_hype, manage_state):
     content = Div(
         H2("Add Options"),
-        P(
-            """To add an option, create another page function (we don't need start=True this time). Add an argument to any
-page that with to link to the new page with the same name as the page function. Use Girmoire's builtin link function to create
-a link to the page."""
+        P("""Create another page function (we don't need start=True this time). To add this as an 
+option to an existing page, pass an argument to the parent page which has the same name as the new page function. 
+Use Grimoire's builtin link function to create a link to the page."""
         ),
-        P(
-            """You can add as many options as you like by continuing to add arguments."""
-        ),
+        P("""You can add as many options as you like by continuing to add arguments to the """),
     )
     code = """
 from grimoire.templates import link
@@ -410,13 +404,13 @@ li {
 }
 
 a {
-    color: #192f50;
+    color: #7777ff;
     text-decoration: none;
     
 }
 
 .option {
-    font-size: 2em;
+    font-size: 1.5em;
 }
 
 .grid {
@@ -437,7 +431,6 @@ a {
 
 .title_page {
     padding: 25px;
-    height: 75vh;
 }
 
 .content_grid__left {
@@ -481,11 +474,7 @@ a {
         grid-template-areas: 
             "left"
             "right";
-        height: 90vh;   
-    }
-
-    .title_page {
-        height: 87vh;
+        height: 95vh;   
     }
 
     .header {
@@ -494,7 +483,7 @@ a {
 
 
     body {
-        font-size: 2.5em;
+        font-size: 2.2em;
     }
 }"""
 

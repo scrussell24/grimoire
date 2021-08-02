@@ -24,13 +24,13 @@ li {
 }
 
 a {
-    color: #192f50;
+    color: #7777ff;
     text-decoration: none;
     
 }
 
 .option {
-    font-size: 2em;
+    font-size: 1.5em;
 }
 
 .grid {
@@ -51,7 +51,6 @@ a {
 
 .title_page {
     padding: 25px;
-    height: 75vh;
 }
 
 .content_grid__left {
@@ -95,11 +94,7 @@ a {
         grid-template-areas: 
             "left"
             "right";
-        height: 90vh;   
-    }
-
-    .title_page {
-        height: 87vh;
+        height: 95vh;   
     }
 
     .header {
@@ -108,7 +103,7 @@ a {
 
 
     body {
-        font-size: 2.5em;
+        font-size: 2.2em;
     }
 }</style>
     <style>pre { line-height: 125%; }
@@ -197,6 +192,8 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
               <div>
                 <h2>Back to the beginning</h2>
                 <p>Circular references are easy in Grimoire. Just add the option argument for an eariler page.</p>
+                <p>Warning: Be careful about creating infinite loops. Remember that Grimoire will
+continue rendering pages as long as it's seeing a version of the state it hasn't seen before.</p>
               </div>
             </div>
             <div class="content_grid__right"><div class="highlight"><pre><span></span><span class="nd">@app</span><span class="o">.</span><span class="n">page</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>

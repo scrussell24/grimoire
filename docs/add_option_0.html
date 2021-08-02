@@ -24,13 +24,13 @@ li {
 }
 
 a {
-    color: #192f50;
+    color: #7777ff;
     text-decoration: none;
     
 }
 
 .option {
-    font-size: 2em;
+    font-size: 1.5em;
 }
 
 .grid {
@@ -51,7 +51,6 @@ a {
 
 .title_page {
     padding: 25px;
-    height: 75vh;
 }
 
 .content_grid__left {
@@ -95,11 +94,7 @@ a {
         grid-template-areas: 
             "left"
             "right";
-        height: 90vh;   
-    }
-
-    .title_page {
-        height: 87vh;
+        height: 95vh;   
     }
 
     .header {
@@ -108,7 +103,7 @@ a {
 
 
     body {
-        font-size: 2.5em;
+        font-size: 2.2em;
     }
 }</style>
     <style>pre { line-height: 125%; }
@@ -196,10 +191,10 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
             <div class="content_grid__left">
               <div>
                 <h2>Add Options</h2>
-                <p>To add an option, create another page function (we don't need start=True this time). Add an argument to any
-page that with to link to the new page with the same name as the page function. Use Girmoire's builtin link function to create
-a link to the page.</p>
-                <p>You can add as many options as you like by continuing to add arguments.</p>
+                <p>Create another page function (we don't need start=True this time). To add this as an 
+option to an existing page, pass an argument to the parent page which has the same name as the new page function. 
+Use Grimoire's builtin link function to create a link to the page.</p>
+                <p>You can add as many options as you like by continuing to add arguments to the </p>
               </div>
             </div>
             <div class="content_grid__right"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">grimoire.templates</span> <span class="kn">import</span> <span class="n">link</span>

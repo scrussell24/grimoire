@@ -24,13 +24,13 @@ li {
 }
 
 a {
-    color: #192f50;
+    color: #7777ff;
     text-decoration: none;
     
 }
 
 .option {
-    font-size: 2em;
+    font-size: 1.5em;
 }
 
 .grid {
@@ -51,7 +51,6 @@ a {
 
 .title_page {
     padding: 25px;
-    height: 75vh;
 }
 
 .content_grid__left {
@@ -95,11 +94,7 @@ a {
         grid-template-areas: 
             "left"
             "right";
-        height: 90vh;   
-    }
-
-    .title_page {
-        height: 87vh;
+        height: 95vh;   
     }
 
     .header {
@@ -108,7 +103,7 @@ a {
 
 
     body {
-        font-size: 2.5em;
+        font-size: 2.2em;
     }
 }</style>
     <style>pre { line-height: 125%; }
@@ -196,8 +191,10 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
             <div class="content_grid__left">
               <div>
                 <h2>Use Hype</h2>
-                <p>The content your page function returns is rendered using Python's built-in str method. So you
-can include html directly in a string if you'd like.</p>
+                <p>The content your page function returns is rendered using Python's 
+built-in 
+<a class="content-link" href="https://docs.python.org/3/library/functions.html#func-str">str</a> 
+function. So you can include html directly in a string if you'd like.</p>
                 <p>Alternativley, Grimoire comes with a small library for creating html called 
 
 <a class="content-link" href="https://github.com/scrussell24/hype-html">hype</a>.
@@ -209,9 +206,9 @@ Import hype's classes and create html using only Python!</p>
 <span class="nd">@app</span><span class="o">.</span><span class="n">page</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">Div</span><span class="p">(</span>
-        <span class="n">H1</span><span class="p">(</span><span class="s2">&quot;Title&quot;</span><span class="p">),</span>
-        <span class="s2">&quot;&lt;p&gt;Hello, &lt;p&gt;&quot;</span><span class="p">,</span>
-        <span class="n">P</span><span class="p">(</span><span class="s2">&quot;Grimoire!&quot;</span><span class="p">)</span>
+        <span class="n">H1</span><span class="p">(</span><span class="s2">&quot;My First Grimoire Story&quot;</span><span class="p">),</span>
+        <span class="s2">&quot;&lt;p&gt;Inline html as a string&lt;p&gt;&quot;</span><span class="p">,</span>
+        <span class="n">P</span><span class="p">(</span><span class="s2">&quot;Html using the Hype library&quot;</span><span class="p">)</span>
     <span class="p">),</span> <span class="n">state</span>
     
 </pre></div>
