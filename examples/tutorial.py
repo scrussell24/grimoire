@@ -474,7 +474,7 @@ a {
         grid-template-areas: 
             "left"
             "right";
-        height: 95vh;   
+        height: 90vh;   
     }
 
     .header {
