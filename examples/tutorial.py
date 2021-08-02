@@ -197,7 +197,8 @@ def add_option(state, use_hype, manage_state):
 option to an existing page, pass an argument to the parent page which has the same name as the new page function. 
 Use Grimoire's builtin link function to create a link to the page."""
         ),
-        P("""You can add as many options as you like by continuing to add arguments to the """),
+        P("""You can add as many options as you like by continuing to add arguments to a page function's
+signature."""),
     )
     code = """
 from grimoire.templates import link
@@ -300,8 +301,8 @@ def back(state, state_class, default_template):
         P(
             """Circular references are easy in Grimoire. Just add the option argument for an eariler page."""
         ),
-        P("""Warning: Be careful about creating infinite loops. Remember that Grimoire will
-continue rendering pages as long as it's seeing a version of the state it hasn't seen before."""),
+        P("""Warning: Be careful about creating infinite loops. Grimoire will
+continue rendering pages as long as it's seeing a version of the state that hasn't previously been rendered."""),
     )
     code = """
 @app.page(start=True)
