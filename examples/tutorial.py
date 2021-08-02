@@ -79,7 +79,8 @@ def title(state, install):
             H1("Welcome to the Grimoire Tutorial!"),
             P("""Grimoire is a Python library for creating interactive fiction as hyperlinked html."""),
             P(f"""The source code is available on {A("github", href="https://github.com/scrussell24/grimoire")}
-including the source for this {A("tutorial", href="https://github.com/scrussell24/grimoire/blob/main/examples/tutorial.py")}."""),
+including the source for this {A("tutorial", href="https://github.com/scrussell24/grimoire/blob/main/examples/tutorial.py")}
+which was created using Grimoire itself."""),
             _class="title_page",
         ),
         state,
@@ -370,10 +371,13 @@ def next_steps(state, default_template, title):
     return (
         Div(
             Div(_class="header"),
-            P(
-                """That's it! You've completed the Grimoire tutoiral. Check out the
-the expamples directory in this repo for more."""
-            ),
+            H1("You're Done!"),
+            P("""That's it! You've completed the Grimoire tutoiral. As you can
+see there's not much to it. Grimiore is purposeley very minimal and our belief is
+that many features can be easily implemented using plain old vanilla Python on top
+of Grimoire."""),
+            P(f"""Check some of the {A("examples", href="https://github.com/scrussell24/grimoire/tree/main/examples")}.
+Here """),
             _class="title_page",
         ),
         state,

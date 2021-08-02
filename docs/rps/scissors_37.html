@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+body {
+    padding: 0px;
+    margin: 0px;
+    color: #121212;
+    font-size: 2rem;
+    font-weight: normal;
+    font-family: Garamond, 'Times New Roman', Times, serif;
+    background-color: #efefef;
+}
+
+ul {
+    list-style-type: none;
+    padding-left: 0px;
+}
+
+a {
+    color: #6666bb;
+    text-decoration: none;
+}
+
+.grid {
+    display: grid;
+    grid-template-areas: 'left content right';
+    grid-template-columns: 1fr 2fr 1fr;
+}
+
+.grid__left, .grid__right {
+    background-color: #e4e4e4;
+    height: 100vh;
+}
+
+
+.grid__content {
+    background-color: #efefef;
+    height: 100vh;
+    padding: 20px;
+}
+
+@media screen and (max-width: 1000px) {
+    .grid {
+        grid-template-columns: 0fr 1fr 0fr;
+    }
+
+    body {
+        font-size: 3em;
+    }
+
+}
+</style>
+    <title>Rock, Paper, Scissors</title>
+  </head>
+  <body>
+    <div class="grid">
+      <div class="grid__left"></div>
+      <div class="grid__content">
+        <div>
+          <p>You chose scissors. Opponent chose scissors. You draw</p>
+        </div>
+        <ul>
+          <li>
+            <a href="begin_46.html">Play another round</a>
+          </li>
+        </ul>
+      </div>
+      <div class="grid__right"></div>
+    </div>
+  </body>
+</html>
