@@ -376,7 +376,8 @@ def next_steps(state, default_template, title):
 see, there's not much to it. Grimiore is purposeley very minimal and our belief is
 that many features can be easily implemented using plain old vanilla Python on top
 of Grimoire."""),
-            P(f"""Check some further {A("examples", href="https://github.com/scrussell24/grimoire/tree/main/examples")}"""),
+            P(f"""Check some further {A("examples", href="https://github.com/scrussell24/grimoire/tree/main/examples")}:"""),
+            Br(),
             Ul(
                 Li(A("A Desolate Planet", href="https://scrussell24.github.io/grimoire/example/index.html")),
                 Li(A("Rock, Paper, Scissors", href="https://scrussell24.github.io/grimoire/rps/index.html")),
