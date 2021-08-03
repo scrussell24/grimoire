@@ -1,4 +1,5 @@
 import os
+from os.path import isfile, join
 from copy import copy
 from string import Template
 from inspect import signature
@@ -17,11 +18,11 @@ class Page:
 
     def render(self, state, pages, path, start=True):
 
-        # clear out the dir
+        # clear out the dir of html files
         if start:
-            for root, _, files in os.walk(path):
-                for file in files:
-                    os.remove(os.path.join(root, file))
+            html_files = [f for f in os.listdir(path) if isfile(join(path, f) and f.endswith(".html"))]
+            for file in html_files:
+                os.remove(os.path.join(path, file))
 
         # calc page hash
         page_hash = f"{abs(hash(hash(self) + hash(str(state))))}"
