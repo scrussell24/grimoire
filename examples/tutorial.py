@@ -178,6 +178,7 @@ Import hype's classes and create html using only Python!"""
     code = """
 from hype import *
 
+
 @app.page(start=True)
 def start(state):
     return Div(
