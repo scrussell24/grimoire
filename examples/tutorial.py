@@ -176,7 +176,7 @@ Import hype's classes and create html using only Python!"""
         ),
     )
     code = """
-from hype import *
+from hype import H1, P
 
 
 @app.page(start=True)

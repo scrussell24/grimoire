@@ -56,7 +56,7 @@ Alternativley, Grimoire comes with a small library for creating html called [hyp
 Import hype's classes and create html using only Python!
 
 ```
-from hype import *
+from hype import H1, P
 
 
 @app.page(start=True)
