@@ -20,7 +20,7 @@ class Page:
 
         # clear out the dir of html files
         if start:
-            html_files = [f for f in os.listdir(path) if isfile(join(path, f) and f.endswith(".html"))]
+            html_files = [f for f in os.listdir(path) if isfile(join(path, f)) and f.endswith(".html")]
             for file in html_files:
                 os.remove(os.path.join(path, file))
 
