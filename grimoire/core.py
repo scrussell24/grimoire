@@ -1,8 +1,9 @@
 import os
-from os.path import isfile, join
 from copy import copy
+from pathlib import Path
 from string import Template
 from inspect import signature
+from os.path import isfile, join
 
 
 os.environ["PYTHONHASHSEED"] = "0"
@@ -20,6 +21,7 @@ class Page:
 
         # clear out the dir of html files
         if start:
+            Path(path).mkdir(parents=True, exist_ok=True)
             html_files = [f for f in os.listdir(path) if isfile(join(path, f)) and f.endswith(".html")]
             for file in html_files:
                 os.remove(os.path.join(path, file))
