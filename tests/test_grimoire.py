@@ -24,7 +24,6 @@ def mock_open():
             ...
 
         def write(self, content):
-            print(content)
             self.called.append(("write", (content,), {}))
             ...
 
@@ -120,6 +119,48 @@ def test_render_with_child_page(monkeypatch, mock_open):
 
     assert mock_open.get_file("site/index.html").called_with("write", "Test")
     assert mock_open.get_file("site/second_0.html").called_with("write", "second page")
+
+
+def test_render_link_to_child(monkeypatch, mock_open):
+    monkeypatch.setattr(builtins, "open", mock_open)
+
+    app = Grimoire()
+
+    @app.page(start=True)
+    def start(state, second):
+        return f"Test, go to {second}", state
+
+    @app.page()
+    def second(state):
+        return "second page", state
+
+    app.render()
+    assert mock_open.get_file("site/index.html").called_with(
+        "write", "Test, go to second_0"
+    )
+    assert mock_open.get_file("site/second_0.html").called_with("write", "second page")
+
+
+def test_render_link_to_parent(monkeypatch, mock_open):
+    monkeypatch.setattr(builtins, "open", mock_open)
+
+    app = Grimoire()
+
+    @app.page(start=True)
+    def start(state, second):
+        return f"Test, go to {second}", state
+
+    @app.page()
+    def second(state, start):
+        return f"second page, go to {start}", state
+
+    app.render()
+    assert mock_open.get_file("site/index.html").called_with(
+        "write", "Test, go to second_0"
+    )
+    assert mock_open.get_file("site/second_0.html").called_with(
+        "write", "second page, go to start_0"
+    )
 
 
 def test_render_with_default_template(monkeypatch, mock_open):
