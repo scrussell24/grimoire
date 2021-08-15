@@ -22,7 +22,11 @@ class Page:
         # clear out the dir of html files
         if start:
             Path(path).mkdir(parents=True, exist_ok=True)
-            html_files = [f for f in os.listdir(path) if isfile(join(path, f)) and f.endswith(".html")]
+            html_files = [
+                f
+                for f in os.listdir(path)
+                if isfile(join(path, f)) and f.endswith(".html")
+            ]
             for file in html_files:
                 os.remove(os.path.join(path, file))
 
@@ -85,7 +89,7 @@ class Grimoire:
 
     def render(self, path="site/"):
         if not self.start:
-            raise Exception(
+            raise RuntimeError(
                 "No start page set. Make sure to add a start=True argument to your first page."
             )
         state = self.state_class() if self.state_class else {}

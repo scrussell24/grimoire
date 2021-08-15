@@ -21,7 +21,9 @@ def base(fn, state, *opts):
     content, state, previous, next = fn(state, *opts)
     opts_element = Div(_class="options")
     if previous:
-        opts_element.append(Span(link(previous[0], previous[1]), _class="previous option"))
+        opts_element.append(
+            Span(link(previous[0], previous[1]), _class="previous option")
+        )
     if next:
         opts_element.append(Span(link(next[0], next[1]), _class="next option"))
     return (
@@ -77,10 +79,14 @@ def title(state, install):
         Div(
             Div(_class="header"),
             H1("Welcome to the Grimoire Tutorial!"),
-            P("""Grimoire is a Python library for creating interactive fiction as hyperlinked html."""),
-            P(f"""The source code is available on {A("github", href="https://github.com/scrussell24/grimoire")}
+            P(
+                """Grimoire is a Python library for creating interactive fiction as hyperlinked html."""
+            ),
+            P(
+                f"""The source code is available on {A("github", href="https://github.com/scrussell24/grimoire")}
 including the source for this {A("tutorial", href="https://github.com/scrussell24/grimoire/blob/main/examples/tutorial.py")}
-which was created using Grimoire itself."""),
+which was created using Grimoire itself."""
+            ),
             _class="title_page",
         ),
         state,
@@ -121,11 +127,13 @@ app = Grimoire()
 def create_page(state, create_app, render_app):
     content = Div(
         H2("Create your first page"),
-        P(f"""Pages are functions decorated by a Grimoire app's {I("page")} method.
+        P(
+            f"""Pages are functions decorated by a Grimoire app's {I("page")} method.
 For the first page, pass the start keyword argument {I("start=True")}. This will prompt grimoire to
 name the associated html page index.html."""
         ),
-        P(f"""Notice how the first, and only, argument of our page function is {I("state")}. We'll get more into that 
+        P(
+            f"""Notice how the first, and only, argument of our page function is {I("state")}. We'll get more into that 
 later, but it's important to always include it as the first argument. Every page function also must return 
 some content to render and a state object."""
         ),
@@ -144,10 +152,13 @@ def start(state):
 def render_app(state, create_page, use_hype):
     content = Div(
         H2("Render the App"),
-        P("""You are ready to render the app. Rendering should create a site/ directory with 
+        P(
+            """You are ready to render the app. Rendering should create a site/ directory with 
 an index.html file associated with our first page. Go ahead and load it into your browser."""
         ),
-        P("As we go through each step, render the app and explore the chages we've made."),
+        P(
+            "As we go through each step, render the app and explore the chages we've made."
+        ),
     )
     code = """
 app.render()
@@ -195,12 +206,15 @@ def start(state):
 def add_option(state, use_hype, manage_state):
     content = Div(
         H2("Add Options"),
-        P("""Create another page function (we don't need start=True this time). To add this as an 
+        P(
+            """Create another page function (we don't need start=True this time). To add this as an 
 option to an existing page, pass an argument to the parent page which has the same name as the new page function. 
 Use Grimoire's builtin link function to create a link to the page."""
         ),
-        P("""You can add as many options as you like by continuing to add arguments to a page function's
-signature."""),
+        P(
+            """You can add as many options as you like by continuing to add arguments to a page function's
+signature."""
+        ),
     )
     code = """
 from grimoire.templates import link
@@ -303,8 +317,10 @@ def back(state, state_class, default_template):
         P(
             """Circular references are easy in Grimoire. Just add the option argument for an eariler page."""
         ),
-        P("""Warning: Be careful about creating infinite loops. Grimoire will
-continue rendering pages as long as it's seeing a version of the state that hasn't previously been rendered."""),
+        P(
+            """Warning: Be careful about creating infinite loops. Grimoire will
+continue rendering pages as long as it's seeing a version of the state that hasn't previously been rendered."""
+        ),
     )
     code = """
 @app.page(start=True)
@@ -373,15 +389,29 @@ def next_steps(state, default_template, title):
         Div(
             Div(_class="header"),
             H1("You're Done!"),
-            P("""That's it! You've completed the Grimoire tutoiral. As you can
+            P(
+                """That's it! You've completed the Grimoire tutoiral. As you can
 see, there's not much to it. Grimiore is purposeley very minimal and our belief is
 that many features can be easily implemented using plain old vanilla Python on top
-of Grimoire."""),
-            P(f"""Check some further {A("examples", href="https://github.com/scrussell24/grimoire/tree/main/examples")}:"""),
+of Grimoire."""
+            ),
+            P(
+                f"""Check some further {A("examples", href="https://github.com/scrussell24/grimoire/tree/main/examples")}:"""
+            ),
             Br(),
             Ul(
-                Li(A("A Desolate Planet", href="https://scrussell24.github.io/grimoire/example/index.html")),
-                Li(A("Rock, Paper, Scissors", href="https://scrussell24.github.io/grimoire/rps/index.html")),
+                Li(
+                    A(
+                        "A Desolate Planet",
+                        href="https://scrussell24.github.io/grimoire/example/index.html",
+                    )
+                ),
+                Li(
+                    A(
+                        "Rock, Paper, Scissors",
+                        href="https://scrussell24.github.io/grimoire/rps/index.html",
+                    )
+                ),
             ),
             _class="title_page",
         ),
