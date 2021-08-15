@@ -1,6 +1,51 @@
+import builtins
 from dataclasses import dataclass
 
-from grimoire import Grimoire
+import pytest
+import grimoire
+
+from grimoire.core import Grimoire
+from grimoire.templates import default_page
+
+
+Grimoire = grimoire.Grimoire
+
+
+@pytest.fixture
+def mock_open():
+    class MockFile:
+        def __init__(self):
+            self.called = []
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, exc_type, exc_value, exc_traceback):
+            ...
+
+        def write(self, content):
+            print(content)
+            self.called.append(("write", (content,), {}))
+            ...
+
+        def called_with(self, method, *args, **kwargs):
+            for call in self.called:
+                if method == call[0] and args == call[1] and kwargs == call[2]:
+                    return True
+
+    class MockOpen:
+        def __init__(self):
+            self.files = {}
+
+        def __call__(self, filename, *args, **kwargs):
+            mock_file = MockFile()
+            self.files[filename] = mock_file
+            return mock_file
+
+        def get_file(self, filename):
+            return self.files[filename]
+
+    return MockOpen()
 
 
 @dataclass
@@ -13,15 +58,83 @@ def test_sanity():
 
 
 def test_create_app():
-    app = Grimoire()
-    assert app
+    Grimoire()
 
 
 def test_create_app_with_state():
-    app = Grimoire(State)
-    assert app
+    Grimoire(State)
 
 
 def test_create_app_with_state_kwarg():
-    app = Grimoire(state=State)
-    assert app
+    Grimoire(state=State)
+
+
+def test_render_with_no_first_page():
+    with pytest.raises(RuntimeError) as err:
+        app = Grimoire()
+        app.render()
+
+
+def test_render_with_first_page(monkeypatch, mock_open):
+    monkeypatch.setattr(builtins, "open", mock_open)
+
+    app = Grimoire()
+
+    @app.page(start=True)
+    def start(state):
+        return "Test", state
+
+    app.render()
+
+    assert mock_open.get_file("site/index.html").called_with("write", "Test")
+
+
+def test_render_with_custom_dir(monkeypatch, mock_open):
+    monkeypatch.setattr(builtins, "open", mock_open)
+
+    app = Grimoire()
+
+    @app.page(start=True)
+    def start(state):
+        return "Test", state
+
+    app.render("app/")
+
+    assert mock_open.get_file("app/index.html").called_with("write", "Test")
+
+
+def test_render_with_child_page(monkeypatch, mock_open):
+    monkeypatch.setattr(builtins, "open", mock_open)
+
+    app = Grimoire()
+
+    @app.page(start=True)
+    def start(state, second):
+        return "Test", state
+
+    @app.page()
+    def second(state):
+        return "second page", state
+
+    app.render()
+
+    assert mock_open.get_file("site/index.html").called_with("write", "Test")
+    assert mock_open.get_file("site/second_0.html").called_with("write", "second page")
+
+
+def test_render_with_default_template(monkeypatch, mock_open):
+    monkeypatch.setattr(builtins, "open", mock_open)
+
+    app = Grimoire()
+
+    @app.page(start=True)
+    @default_page("Title")
+    def start(state, second):
+        return "Test", [], state
+
+    @app.page()
+    @default_page("Title")
+    def second(state):
+        return "second page", [], state
+
+    app.render()
