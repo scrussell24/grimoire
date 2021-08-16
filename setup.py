@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="grimoire-if",
-    version="0.0.10",
+    version="0.0.11",
     install_requires=["hype-html"],
     author="Scott Russell",
     author_email="me@scottrussell.net",
