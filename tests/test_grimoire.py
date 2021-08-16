@@ -49,7 +49,7 @@ def mock_open():
 
 @dataclass
 class State:
-    test: str
+    test: str = ""
 
 
 def test_sanity():
@@ -121,6 +121,30 @@ def test_render_with_child_page(monkeypatch, mock_open):
     assert mock_open.get_file("site/second_0.html").called_with("write", "second page")
 
 
+def test_render_with_multiple_child_pages(monkeypatch, mock_open):
+    monkeypatch.setattr(builtins, "open", mock_open)
+
+    app = Grimoire()
+
+    @app.page(start=True)
+    def start(state, second, third):
+        return "Test", state
+
+    @app.page()
+    def second(state):
+        return "second page", state
+
+    @app.page()
+    def third(state):
+        return "third page", state
+
+    app.render()
+
+    assert mock_open.get_file("site/index.html").called_with("write", "Test")
+    assert mock_open.get_file("site/second_0.html").called_with("write", "second page")
+    assert mock_open.get_file("site/third_0.html").called_with("write", "third page")
+
+
 def test_render_link_to_child(monkeypatch, mock_open):
     monkeypatch.setattr(builtins, "open", mock_open)
 
@@ -179,3 +203,62 @@ def test_render_with_default_template(monkeypatch, mock_open):
         return "second page", [], state
 
     app.render()
+
+
+def test_state(monkeypatch, mock_open):
+    monkeypatch.setattr(builtins, "open", mock_open)
+
+    app = Grimoire(State)
+
+    @app.page(start=True)
+    def start(state, second):
+        state.test = "test state"
+        return f"Test, go to {second}", state
+
+    @app.page()
+    def second(state):
+        return f"second page, {state.test}", state
+
+    app.render()
+    assert mock_open.get_file("site/index.html").called_with(
+        "write", "Test, go to second_0"
+    )
+    assert mock_open.get_file("site/second_0.html").called_with(
+        "write", "second page, test state"
+    )
+
+
+def test_render_the_same_page_multiple_times(monkeypatch, mock_open):
+    monkeypatch.setattr(builtins, "open", mock_open)
+
+    app = Grimoire(State)
+
+    @app.page(start=True)
+    def start(state, second, third):
+        return "Test", state
+
+    @app.page()
+    def second(state, fourth):
+        state.test = "went to second page"
+        return "second page", state
+
+    @app.page()
+    def third(state, fourth):
+        state.test = "went to third page"
+        return "third page", state
+
+    @app.page()
+    def fourth(state):
+        return state.test, state
+
+    app.render()
+
+    assert mock_open.get_file("site/index.html").called_with("write", "Test")
+    assert mock_open.get_file("site/second_0.html").called_with("write", "second page")
+    assert mock_open.get_file("site/third_0.html").called_with("write", "third page")
+    assert mock_open.get_file("site/fourth_0.html").called_with(
+        "write", "went to second page"
+    )
+    assert mock_open.get_file("site/fourth_1.html").called_with(
+        "write", "went to third page"
+    )
