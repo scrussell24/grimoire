@@ -5,5 +5,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - run: pip install -r requirements-dev.txt
+      - run: pip install -r requirements.txt
       - run: ./scripts/test.sh
