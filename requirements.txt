@@ -3,6 +3,7 @@ pytest-cov
 pycodestyle
 black
 mypy
+tox
 
 hype-html
 wheel
