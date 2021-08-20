@@ -29,10 +29,10 @@ def base(fn, state, *opts):
     return (
         Doc(
             Html(
-                Title("Grimoire Tutorial: Getting Started"),
-                Meta(name="viewport"),
-                Meta(name="description", content="A tutorial of the Grimoire interactive fiction Python library."),
                 Head(
+                    Title("Grimoire Tutorial: Getting Started"),
+                    Meta(name="viewport"),
+                    Meta(name="description", content="A tutorial of the Grimoire interactive fiction Python library."),
                     Link(rel="stylesheet", href="style.css"),
                 ),
                 Body(
