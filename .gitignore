@@ -8,3 +8,4 @@ grimoire_if.egg-info
 dist/
 .coverage
 scratch.html
+.tox
