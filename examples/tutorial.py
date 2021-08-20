@@ -31,7 +31,6 @@ def base(fn, state, *opts):
             Html(
                 Head(
                     Link(rel="stylesheet", href="style.css"),
-                    Style(HtmlFormatter().get_style_defs(".highlight"))
                 ),
                 Body(
                     Div(
