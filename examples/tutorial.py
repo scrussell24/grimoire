@@ -32,7 +32,10 @@ def base(fn, state, *opts):
                 Head(
                     Title("Grimoire Tutorial: Getting Started"),
                     Meta(name="viewport"),
-                    Meta(name="description", content="A tutorial of the Grimoire interactive fiction Python library."),
+                    Meta(
+                        name="description",
+                        content="A tutorial of the Grimoire interactive fiction Python library.",
+                    ),
                     Link(rel="stylesheet", href="style.css"),
                 ),
                 Body(
@@ -43,7 +46,6 @@ def base(fn, state, *opts):
                         _class="grid",
                     )
                 ),
-    
                 lang="en",
             )
         ),
