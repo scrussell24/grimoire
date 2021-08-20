@@ -30,6 +30,7 @@ def base(fn, state, *opts):
         Doc(
             Html(
                 Title("Grimoire Tutorial: Getting Started"),
+                Meta(name="viewport"),
                 Head(
                     Link(rel="stylesheet", href="style.css"),
                 ),
@@ -41,6 +42,7 @@ def base(fn, state, *opts):
                         _class="grid",
                     )
                 ),
+    
                 lang="en",
             )
         ),
