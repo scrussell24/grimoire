@@ -2,7 +2,7 @@
 
 Grimoire is a Python library for creating interactive fiction as hyperlinked html.
 
-![tests](https://github.com/scrussell24/grimoire/actions/workflows/main/badge.svg)
+![tests](https://github.com/scrussell24/grimoire/actions/workflows/main.yml/badge.svg)
 
 ## Installation
 
