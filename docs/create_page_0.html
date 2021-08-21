@@ -20,8 +20,7 @@
 <i>page</i> method.
 For the first page, pass the start keyword argument 
 <i>start=True</i>. This will prompt grimoire to
-name the associated html page index.html.</p>
-                <p>Notice how the first, and only, argument of our page function is 
+name the associated html page index.html.Notice how the first, and only, argument of our page function is 
 <i>state</i>. We'll get more into that 
 later, but it's important to always include it as the first argument. Every page function also must return 
 some content to render and a state object.</p>
@@ -30,7 +29,6 @@ some content to render and a state object.</p>
             <div class="content_grid__right"><div class="highlight"><pre><span></span><span class="nd">@app</span><span class="o">.</span><span class="n">page</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
     <span class="k">return</span> <span class="s2">&quot;This is my first grimoire app.&quot;</span><span class="p">,</span> <span class="n">state</span>
-    
 </pre></div>
 </div>
           </div>
