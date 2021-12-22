@@ -18,7 +18,7 @@ def default_page(
     link_color: str = "#6666bb",
     font_family: str = "Garamond, 'Times New Roman', Times, serif",
     font_weight: str = "normal",
-    line_height: str = "1em",
+    line_height: str = "1.5em",
 ):
     @make_decorator
     def inner(fn, state: str, *opts: List[int]):
@@ -66,7 +66,7 @@ body {
     padding: 0px;
     margin: 0px;
     color: $font_color;
-    font-size: 2rem;
+    font-size: 2em;
     font-weight: $font_weight;
     font-family: $font_family;
     background-color: $primary_bg_color;
@@ -107,7 +107,7 @@ a {
     }
 
     body {
-        font-size: 3em;
+        font-size: 2em;
     }
 
 }

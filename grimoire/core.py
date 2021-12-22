@@ -77,7 +77,7 @@ class Grimoire:
         self.start = None
         self.state_class = state
 
-    def page(self, start=False):
+    def page(self, start: bool = False):
         def inner(f):
             page = Page(f)
             if start:
@@ -87,7 +87,7 @@ class Grimoire:
 
         return inner
 
-    def render(self, path="site/"):
+    def render(self, path: str = "site/"):
         if not self.start:
             raise RuntimeError(
                 "No start page set. Make sure to add a start=True argument to your first page."
