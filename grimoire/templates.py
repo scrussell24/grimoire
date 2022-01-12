@@ -3,7 +3,7 @@ from string import Template
 
 from grimoire.utils import make_decorator
 
-from hype import *
+from hype import Doc, Html, Head, Title, Meta, Link, Style, Body, Main, Section, Ul, Li
 
 
 def link(text, option_hash):
@@ -22,28 +22,36 @@ def default_page(
                     Head(
                         Title("Grimoire Story"),
                         Meta(charset="utf-8"),
-                        Meta( name="viewport", content="width=device-width, initial-scale=1"),
-                        Link(rel="stylesheet", href="https://unpkg.com/@picocss/pico@latest/css/pico.min.css"),
-                        Style("""
+                        Meta(
+                            name="viewport",
+                            content="width=device-width, initial-scale=1",
+                        ),
+                        Link(
+                            rel="stylesheet",
+                            href="https://unpkg.com/@picocss/pico@latest/css/pico.min.css",
+                        ),
+                        Style(
+                            """
     ul {
         padding-left: 0px !important;
     }
 
     li {
         list-style: none !important;
-    }""")
+    }"""
+                        ),
                     ),
                     Body(
                         Main(
                             content,
                             Section(
-                            Ul(*[Li(link(o[0], o[1])) for o in options]),
+                                Ul(*[Li(link(o[0], o[1])) for o in options]),
                             ),
                             _class="container",
                         ),
                     ),
                     lang="en",
-                    data_theme="dark"
+                    data_theme="dark",
                 )
             ),
             state,
