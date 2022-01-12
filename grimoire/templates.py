@@ -3,7 +3,21 @@ from string import Template
 
 from grimoire.utils import make_decorator
 
-from hype import Doc, Html, Head, Title, Meta, Link, Style, Body, Main, Section, Ul, Li
+from hype import (
+    Doc,
+    Html,
+    Head,
+    Title,
+    Meta,
+    Link,
+    Style,
+    Body,
+    Main,
+    Section,
+    Ul,
+    Li,
+    A,
+)
 
 
 def link(text, option_hash):
