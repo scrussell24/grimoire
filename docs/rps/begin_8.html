@@ -1,19 +1,29 @@
 <!DOCTYPE html>
-<html>
+<html lang="en" data-theme="dark">
   <head>
-    <title>Rock, Paper, Scissors</title>
+    <title>Grimoire Story</title>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1" name="viewport"/>
+    <link href="https://unpkg.com/@picocss/pico@latest/css/pico.min.css" rel="stylesheet"/>
+    <style>
+    ul {
+        padding-left: 0px !important;
+    }
+
+    li {
+        list-style: none !important;
+    }</style>
   </head>
   <body>
-    <div class="grid">
-      <div class="grid__left"></div>
-      <div class="grid__content">
-        <div>
-          <p>Round: 9 Wins: 2</p>
-          <p>Choose 
+    <main class="container">
+      <div>
+        <p>Round: 9 Wins: 2</p>
+        <p>Choose 
 <a href="rock_8.html">rock</a>, 
 <a href="paper_5.html">paper</a>, or 
-<a href="scissors_6.html">scissors</a>.</p>
-        </div>
+<a href="scissors_5.html">scissors</a>.</p>
+      </div>
+      <section>
         <ul>
           <li>
             <a href="rock_8.html">Choose Rock</a>
@@ -22,11 +32,10 @@
             <a href="paper_5.html">Choose Paper</a>
           </li>
           <li>
-            <a href="scissors_6.html">Choose Scissors</a>
+            <a href="scissors_5.html">Choose Scissors</a>
           </li>
         </ul>
-      </div>
-      <div class="grid__right"></div>
-    </div>
+      </section>
+    </main>
   </body>
 </html>
