@@ -6,7 +6,7 @@ from inspect import signature
 from os.path import isfile, join
 
 
-from grimoire.errors import GrimoireUnknownPageOptions
+from grimoire.errors import GrimoireUnknownPageOptions, GrimoireNoStartPage
 
 
 os.environ["PYTHONHASHSEED"] = "0"
@@ -37,6 +37,7 @@ class Page:
         page_hash = f"{abs(hash(hash(self) + hash(str(state))))}"
 
         if page_hash not in self.cache:
+            # This page/state has not yet been rendered
             self.cache.append(page_hash)
 
             # find the option pages we'll need to inject
@@ -65,6 +66,7 @@ class Page:
                 child_page_id = page.render(copy(new_state), pages, path, start=False)
                 page_ids[page.fn.__name__] = child_page_id
 
+            # inject the real child page id's into this page o
             template = Template(str(content))
             content = template.substitute(page_ids)
 
@@ -99,8 +101,6 @@ class Grimoire:
 
     def render(self, path: str = "site/"):
         if not self.start:
-            raise RuntimeError(
-                "No start page set. Make sure to add a start=True argument to your first page."
-            )
+            raise GrimoireNoStartPage()
         state = self.state_class() if self.state_class else {}
         self.start.render(state, self.pages, path)

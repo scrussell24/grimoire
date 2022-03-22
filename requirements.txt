@@ -1,10 +1,17 @@
+# dev
 pytest==6.2.4
 pytest-cov==2.12.1
 pycodestyle==2.7.0
 black==21.6b0
 mypy==0.910
 tox==3.24.2
+
+# runtime
 hype-html==1.0.0
+
+# packaging
 twine==3.4.1
-Pygments==2.9.0
 wheel
+
+# example
+Pygments==2.9.0

@@ -6,7 +6,7 @@ import grimoire
 
 from grimoire.core import Grimoire
 from grimoire.templates import default_page, link
-from grimoire.errors import GrimoireInvalidOption, GrimoireUnknownPageOptions
+from grimoire.errors import GrimoireInvalidOption, GrimoireUnknownPageOptions, GrimoireNoStartPage
 
 
 Grimoire = grimoire.Grimoire
@@ -70,7 +70,7 @@ def test_create_app_with_state_kwarg():
 
 
 def test_render_with_no_first_page():
-    with pytest.raises(RuntimeError) as err:
+    with pytest.raises(GrimoireNoStartPage) as err:
         app = Grimoire()
         app.render()
 
