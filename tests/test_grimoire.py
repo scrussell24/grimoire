@@ -5,7 +5,8 @@ import pytest
 import grimoire
 
 from grimoire.core import Grimoire
-from grimoire.templates import default_page
+from grimoire.templates import default_page, link
+from grimoire.errors import GrimoireInvalidOption, GrimoireUnknownPageOptions
 
 
 Grimoire = grimoire.Grimoire
@@ -262,3 +263,37 @@ def test_render_the_same_page_multiple_times(monkeypatch, mock_open):
     assert mock_open.get_file("site/fourth_1.html").called_with(
         "write", "went to third page"
     )
+
+
+def test_render_invalid_option(monkeypatch, mock_open):
+    monkeypatch.setattr(builtins, "open", mock_open)
+
+    app = Grimoire()
+
+    @app.page(start=True)
+    def start(state):
+        return f"Test, go to {link('second', second)}", state
+
+    @app.page()
+    def second(state):
+        return "second page", state
+
+    with pytest.raises(GrimoireInvalidOption):
+        app.render()
+
+
+def test_render_unknown_options(monkeypatch, mock_open):
+    monkeypatch.setattr(builtins, "open", mock_open)
+
+    app = Grimoire()
+
+    @app.page(start=True)
+    def start(state, third):
+        return f"Test, go to {link('second', third)}", state
+
+    @app.page()
+    def second(state):
+        return "second page", state
+
+    with pytest.raises(GrimoireUnknownPageOptions):
+        app.render()

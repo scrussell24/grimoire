@@ -6,6 +6,9 @@ from inspect import signature
 from os.path import isfile, join
 
 
+from grimoire.errors import GrimoireUnknownPageOptions
+
+
 os.environ["PYTHONHASHSEED"] = "0"
 
 
@@ -37,16 +40,23 @@ class Page:
             self.cache.append(page_hash)
 
             # find the option pages we'll need to inject
-            params = signature(self.fn).parameters
+            params = list(signature(self.fn).parameters.keys())
+            used_params = []
             options = []
             for name, page in pages.items():
-                if name in params.keys():
+                if name in params:
+                    used_params.append(name)
                     options.append(page)
+
+            # Make sure a page functions exist for all parameters (besides state)
+            unused_params = set(params[1:]).difference(set(used_params))
+            if unused_params:
+                raise GrimoireUnknownPageOptions(unused_params)
 
             # render, inject the option name which will
             # be replaced with the actual hash later
             content, new_state = self.fn(
-                copy(state), *[f"${k}" for k in list(params.keys())[1:]]
+                copy(state), *[f"${k}" for k in list(params)[1:]]
             )
 
             # render the children

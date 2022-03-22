@@ -2,14 +2,14 @@ from typing import List
 from string import Template
 
 from grimoire.utils import make_decorator
-from grimoire.errors import GrimoireInvalidOptionError
+from grimoire.errors import GrimoireInvalidOption
 
 from hype import Doc, Html, Head, Style, A, Title, Body, Div, Ul, Li
 
 
 def link(text, option_hash):
     if callable(option_hash):
-        raise GrimoireInvalidOptionError(option_hash)
+        raise GrimoireInvalidOption(option_hash)
     return A(text, href=f"{option_hash}.html")
 
 
