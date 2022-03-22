@@ -1,6 +1,6 @@
 #!/bin/bash
 
-black .
+black grimoire/.
 
 pycodestyle --max-line-length=100 --ignore=E742,W391 grimoire/
 retVal=$?

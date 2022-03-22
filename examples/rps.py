@@ -85,10 +85,8 @@ def choice(f, state, begin):
 
     state.choice = None
     return (
-        Div(
-            P(
-                f"You chose {choice.value}. Opponent chose {op_choice.value}. You {status}"
-            ),
+        P(
+            f"You chose {choice.value}. Opponent chose {op_choice.value}. You {status}"
         ),
         [("Play another round", begin)],
         state,
