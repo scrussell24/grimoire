@@ -4,12 +4,35 @@ from dataclasses import dataclass
 import pytest
 import grimoire
 
+import grimoire.core as grimoire
 from grimoire.core import Grimoire
 from grimoire.templates import default_page, link
 from grimoire.errors import GrimoireInvalidOption, GrimoireUnknownPageOptions, GrimoireNoStartPage
 
 
 Grimoire = grimoire.Grimoire
+
+
+@pytest.fixture
+def mock_os():
+    class MockPath:
+        def join(self, *args, **kwargs):
+            ...
+
+    class MockOS:
+        def __init__(self):
+            self.environ = {}
+        
+        def listdir(self, *args, **kwargs):
+            return []
+
+        def remove(self, *args, **kwargs):
+            ...
+
+        def path(self, *args, **kwargs):
+            return MockPath()
+    
+    return MockOS
 
 
 @pytest.fixture
@@ -75,8 +98,9 @@ def test_render_with_no_first_page():
         app.render()
 
 
-def test_render_with_first_page(monkeypatch, mock_open):
+def test_render_with_first_page(monkeypatch, mock_open, mock_os):
     monkeypatch.setattr(builtins, "open", mock_open)
+    monkeypatch.setattr(grimoire, "os", mock_os)
 
     app = Grimoire()
 
@@ -89,8 +113,9 @@ def test_render_with_first_page(monkeypatch, mock_open):
     assert mock_open.get_file("site/index.html").called_with("write", "Test")
 
 
-def test_render_with_custom_dir(monkeypatch, mock_open):
+def test_render_with_custom_dir(monkeypatch, mock_open, mock_os):
     monkeypatch.setattr(builtins, "open", mock_open)
+    monkeypatch.setattr(grimoire, "os", mock_os)
 
     app = Grimoire()
 
@@ -103,8 +128,9 @@ def test_render_with_custom_dir(monkeypatch, mock_open):
     assert mock_open.get_file("app/index.html").called_with("write", "Test")
 
 
-def test_render_with_child_page(monkeypatch, mock_open):
+def test_render_with_child_page(monkeypatch, mock_open, mock_os):
     monkeypatch.setattr(builtins, "open", mock_open)
+    monkeypatch.setattr(grimoire, "os", mock_os)
 
     app = Grimoire()
 
@@ -122,8 +148,9 @@ def test_render_with_child_page(monkeypatch, mock_open):
     assert mock_open.get_file("site/second_0.html").called_with("write", "second page")
 
 
-def test_render_with_multiple_child_pages(monkeypatch, mock_open):
+def test_render_with_multiple_child_pages(monkeypatch, mock_open, mock_os):
     monkeypatch.setattr(builtins, "open", mock_open)
+    monkeypatch.setattr(grimoire, "os", mock_os)
 
     app = Grimoire()
 
@@ -146,8 +173,9 @@ def test_render_with_multiple_child_pages(monkeypatch, mock_open):
     assert mock_open.get_file("site/third_0.html").called_with("write", "third page")
 
 
-def test_render_link_to_child(monkeypatch, mock_open):
+def test_render_link_to_child(monkeypatch, mock_open, mock_os):
     monkeypatch.setattr(builtins, "open", mock_open)
+    monkeypatch.setattr(grimoire, "os", mock_os)
 
     app = Grimoire()
 
@@ -166,8 +194,9 @@ def test_render_link_to_child(monkeypatch, mock_open):
     assert mock_open.get_file("site/second_0.html").called_with("write", "second page")
 
 
-def test_render_link_to_parent(monkeypatch, mock_open):
+def test_render_link_to_parent(monkeypatch, mock_open, mock_os):
     monkeypatch.setattr(builtins, "open", mock_open)
+    monkeypatch.setattr(grimoire, "os", mock_os)
 
     app = Grimoire()
 
@@ -188,8 +217,9 @@ def test_render_link_to_parent(monkeypatch, mock_open):
     )
 
 
-def test_render_with_default_template(monkeypatch, mock_open):
+def test_render_with_default_template(monkeypatch, mock_open, mock_os):
     monkeypatch.setattr(builtins, "open", mock_open)
+    monkeypatch.setattr(grimoire, "os", mock_os)
 
     app = Grimoire()
 
@@ -206,8 +236,9 @@ def test_render_with_default_template(monkeypatch, mock_open):
     app.render()
 
 
-def test_state(monkeypatch, mock_open):
+def test_state(monkeypatch, mock_open, mock_os):
     monkeypatch.setattr(builtins, "open", mock_open)
+    monkeypatch.setattr(grimoire, "os", mock_os)
 
     app = Grimoire(State)
 
@@ -229,8 +260,9 @@ def test_state(monkeypatch, mock_open):
     )
 
 
-def test_render_the_same_page_multiple_times(monkeypatch, mock_open):
+def test_render_the_same_page_multiple_times(monkeypatch, mock_open, mock_os):
     monkeypatch.setattr(builtins, "open", mock_open)
+    monkeypatch.setattr(grimoire, "os", mock_os)
 
     app = Grimoire(State)
 
@@ -265,8 +297,9 @@ def test_render_the_same_page_multiple_times(monkeypatch, mock_open):
     )
 
 
-def test_render_invalid_option(monkeypatch, mock_open):
+def test_render_invalid_option(monkeypatch, mock_open, mock_os):
     monkeypatch.setattr(builtins, "open", mock_open)
+    monkeypatch.setattr(grimoire, "os", mock_os)
 
     app = Grimoire()
 
@@ -282,8 +315,9 @@ def test_render_invalid_option(monkeypatch, mock_open):
         app.render()
 
 
-def test_render_unknown_options(monkeypatch, mock_open):
+def test_render_unknown_options(monkeypatch, mock_open, mock_os):
     monkeypatch.setattr(builtins, "open", mock_open)
+    monkeypatch.setattr(grimoire, "os", mock_os)
 
     app = Grimoire()
 
