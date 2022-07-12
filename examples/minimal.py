@@ -1,10 +1,8 @@
-from grimoire import Grimoire
-from grimoire.templates import link
-
-from hype import *
-
-
 from dataclasses import dataclass
+
+from hype import Div, P
+from grimoire import Grimoire
+from grimoire.templates import link, default_page
 
 
 @dataclass
@@ -13,9 +11,6 @@ class State:
 
 
 app = Grimoire(State)
-
-
-from grimoire.templates import default_page
 
 
 page = default_page("Minimal Example")
