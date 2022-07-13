@@ -4,7 +4,7 @@ from inspect import signature
 from os.path import isfile, join
 from pathlib import Path
 from string import Template
-from typing import Any, Callable, Dict, List, Optional, Protocol, Type
+from typing import Any, Callable, Dict, List, Optional, Type
 
 from grimoire.errors import GrimoireNoStartPage, GrimoireUnknownPageOptions
 
