@@ -1,12 +1,11 @@
-from typing import *
 from dataclasses import dataclass
+from typing import *
 
+from hype import *
 
 from grimoire import Grimoire
 from grimoire.templates import link
 from grimoire.utils import make_decorator
-
-from hype import *
 
 
 @dataclass

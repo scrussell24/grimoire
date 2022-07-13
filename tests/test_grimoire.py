@@ -2,13 +2,14 @@ import builtins
 from dataclasses import dataclass
 
 import pytest
-import grimoire
 
 import grimoire.core as grimoire
-from grimoire.core import Grimoire
+from grimoire.errors import (
+    GrimoireInvalidOption,
+    GrimoireNoStartPage,
+    GrimoireUnknownPageOptions,
+)
 from grimoire.templates import default_page, link
-from grimoire.errors import GrimoireInvalidOption, GrimoireUnknownPageOptions, GrimoireNoStartPage
-
 
 Grimoire = grimoire.Grimoire
 
@@ -22,7 +23,7 @@ def mock_os():
     class MockOS:
         def __init__(self):
             self.environ = {}
-        
+
         def listdir(self, *args, **kwargs):
             return []
 
@@ -31,7 +32,7 @@ def mock_os():
 
         def path(self, *args, **kwargs):
             return MockPath()
-    
+
     return MockOS
 
 

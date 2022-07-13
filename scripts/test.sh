@@ -1,6 +1,9 @@
 #!/bin/bash
+set -e
 
-black grimoire/.
+isort -s env -c .
+black grimoire/. --check
+
 
 pycodestyle --max-line-length=100 --ignore=E742,W391 grimoire/
 retVal=$?
@@ -9,7 +12,7 @@ if [ $retVal -ne 0 ]; then
     exit $retVal
 fi
 
-python -m mypy grimoire/
+python -m mypy grimoire/ --exclude env/ --disallow-untyped-defs
 retVal=$?
 if [ $retVal -ne 0 ]; then
     echo "Python Type Checking Error"

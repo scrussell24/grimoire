@@ -1,8 +1,9 @@
 from dataclasses import dataclass
 
 from hype import Div, P
+
 from grimoire import Grimoire
-from grimoire.templates import link, default_page
+from grimoire.templates import default_page, link
 
 
 @dataclass

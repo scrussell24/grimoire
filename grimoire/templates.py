@@ -1,37 +1,36 @@
-from typing import List
 from string import Template
-
-from grimoire.utils import make_decorator
-from grimoire.errors import GrimoireInvalidOption
+from typing import Any, Callable, List, Tuple
 
 from hype import (
-    Doc,
-    Html,
-    Head,
-    Title,
-    Meta,
-    Link,
-    Style,
-    Body,
-    Main,
-    Section,
-    Ul,
-    Li,
     A,
+    Body,
+    Doc,
+    Element,
+    Head,
+    Html,
+    Li,
+    Link,
+    Main,
+    Meta,
+    Section,
+    Style,
+    Title,
+    Ul,
 )
 
+from grimoire.errors import GrimoireInvalidOption
+from grimoire.utils import make_decorator
 
-def link(text, option_hash):
+
+def link(text: str, option_hash: str) -> Element:
     if callable(option_hash):
         raise GrimoireInvalidOption(option_hash)
     return A(text, href=f"{option_hash}.html")
 
 
-def default_page(
-    title: str,
-):
+def default_page(title: str) -> Callable:
     @make_decorator
-    def inner(fn, state: str, *opts: List[int]):
+    def inner(fn: Callable, state: str, *opts: List[str]) -> Tuple[Element, Any]:
         content, options, state = fn(state, *opts)
         return (
             Doc(

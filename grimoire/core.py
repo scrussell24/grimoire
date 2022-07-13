@@ -1,26 +1,27 @@
 import os
-from copy import copy
-from pathlib import Path
-from string import Template
+from copy import deepcopy
 from inspect import signature
 from os.path import isfile, join
+from pathlib import Path
+from string import Template
+from typing import Any, Callable, Dict, List, Optional, Protocol, Type
 
-
-from grimoire.errors import GrimoireUnknownPageOptions, GrimoireNoStartPage
-
+from grimoire.errors import GrimoireNoStartPage, GrimoireUnknownPageOptions
 
 os.environ["PYTHONHASHSEED"] = "0"
 
 
 class Page:
-    def __init__(self, fn):
+    def __init__(self, fn: Callable) -> None:
         self.fn = fn
-        self.cache = []
+        self.cache: List[str] = []
 
-    def page_number(self, page_hash):
+    def page_number(self, page_hash: str) -> str:
         return f"{self.fn.__name__}_{self.cache.index(page_hash)}"
 
-    def render(self, state, pages, path, start=True):
+    def render(
+        self, state: Any, pages: Dict[str, "Page"], path: str, start: bool = True
+    ) -> str:
 
         # clear out the dir of html files
         if start:
@@ -57,13 +58,15 @@ class Page:
             # render, inject the option name which will
             # be replaced with the actual hash later
             content, new_state = self.fn(
-                copy(state), *[f"${k}" for k in list(params)[1:]]
+                deepcopy(state), *[f"${k}" for k in list(params)[1:]]
             )
 
             # render the children
             page_ids = {}
             for page in options:
-                child_page_id = page.render(copy(new_state), pages, path, start=False)
+                child_page_id = page.render(
+                    deepcopy(new_state), pages, path, start=False
+                )
                 page_ids[page.fn.__name__] = child_page_id
 
             # inject the real child page id's into this page o
@@ -84,13 +87,13 @@ class Page:
 
 
 class Grimoire:
-    def __init__(self, state=None):
-        self.pages = {}
-        self.start = None
+    def __init__(self, state: Any = None) -> None:
+        self.pages: Dict[str, Page] = {}
+        self.start: Optional[Page] = None
         self.state_class = state
 
-    def page(self, start: bool = False):
-        def inner(f):
+    def page(self, start: bool = False) -> Callable:
+        def inner(f: Callable) -> Callable:
             page = Page(f)
             if start:
                 self.start = page
@@ -99,7 +102,7 @@ class Grimoire:
 
         return inner
 
-    def render(self, path: str = "site/"):
+    def render(self, path: str = "site/") -> None:
         if not self.start:
             raise GrimoireNoStartPage()
         state = self.state_class() if self.state_class else {}

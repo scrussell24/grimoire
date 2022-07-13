@@ -1,36 +1,36 @@
-from typing import Optional
 from dataclasses import dataclass
+from typing import Optional
 
+from hype import (
+    H1,
+    H2,
+    A,
+    Body,
+    Br,
+    Div,
+    Doc,
+    Footer,
+    Head,
+    Html,
+    I,
+    Li,
+    Link,
+    Main,
+    Meta,
+    P,
+    Section,
+    Span,
+    Style,
+    Title,
+    Ul,
+)
 from pygments import highlight
 from pygments.formatters import HtmlFormatter
-from pygments.lexers import PythonLexer, BashLexer
+from pygments.lexers import BashLexer, PythonLexer
 
 from grimoire import Grimoire
 from grimoire.templates import link
 from grimoire.utils import make_decorator
-from hype import (
-    Div,
-    Span,
-    Doc,
-    Html,
-    Head,
-    Title,
-    Meta,
-    Link,
-    Body,
-    P,
-    A,
-    H1,
-    H2,
-    I,
-    Br,
-    Ul,
-    Li,
-    Style,
-    Section,
-    Main,
-    Footer,
-)
 
 
 @dataclass
@@ -43,9 +43,7 @@ def base(fn, state, *opts):
     content, state, previous, next = fn(state, *opts)
     opts_element = Div(_class="options")
     if previous:
-        opts_element.append(
-            Span(link(previous[0], previous[1]))
-        )
+        opts_element.append(Span(link(previous[0], previous[1])))
     if next:
         opts_element.append(Span(link(next[0], next[1]), style="float: right;"))
     return (
@@ -54,15 +52,15 @@ def base(fn, state, *opts):
                 Head(
                     Title("Grimoire Tutorial: Getting Started"),
                     Meta(charset="utf-8"),
-                        Meta(
-                            name="viewport",
-                            content="width=device-width, initial-scale=1",
-                        ),
-                        Link(
-                            rel="stylesheet",
-                            href="https://unpkg.com/@picocss/pico@latest/css/pico.min.css",
-                        ),
-                        style,
+                    Meta(
+                        name="viewport",
+                        content="width=device-width, initial-scale=1",
+                    ),
+                    Link(
+                        rel="stylesheet",
+                        href="https://unpkg.com/@picocss/pico@latest/css/pico.min.css",
+                    ),
+                    style,
                 ),
                 Body(
                     Main(content, _class="container"),
@@ -459,7 +457,8 @@ of Grimoire."""
     )
 
 
-style = Style("""
+style = Style(
+    """
 
 .options {
     border-top: 1px solid #333333;
@@ -551,7 +550,8 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 .highlight .vm { color: #19177C } /* Name.Variable.Magic */
 .highlight .il { color: #666666 } /* Literal.Number.Integer.Long */
 
-""")
+"""
+)
 
 
 if __name__ == "__main__":

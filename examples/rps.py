@@ -1,13 +1,13 @@
+from dataclasses import dataclass
 from enum import Enum
 from random import choice as rchoice
-from typing import Optional
-from dataclasses import dataclass
+from typing import Callable, List, Optional, Tuple
 
-from hype import *
+from hype import Div, Element, P
 
 from grimoire import Grimoire
-from grimoire.utils import make_decorator
 from grimoire.templates import default_page, link
+from grimoire.utils import make_decorator
 
 
 class Choice(Enum):
@@ -31,7 +31,7 @@ app = Grimoire(State)
 
 @app.page(start=True)
 @page
-def begin(state, rock, paper, scissors):
+def begin(state: State, rock: str, paper: str, scissors: str) -> Tuple[Element, List[Tuple[str, str]], State]:
 
     if state.round < 10:
         state.round += 1
@@ -53,7 +53,7 @@ def begin(state, rock, paper, scissors):
 
 @make_decorator
 @page
-def choice(f, state, begin):
+def choice(f: Callable, state: State, begin: str) -> Tuple[Element, List[Tuple[str, str]], State]:
     state = f(state, begin)
     choice = state.choice
     op_choice = rchoice(list(Choice))
@@ -86,7 +86,7 @@ def choice(f, state, begin):
     state.choice = None
     return (
         P(
-            f"You chose {choice.value}. Opponent chose {op_choice.value}. You {status}"
+            f"You chose {choice.value if choice else ''}. Opponent chose {op_choice.value}. You {status}"
         ),
         [("Play another round", begin)],
         state,
@@ -95,21 +95,21 @@ def choice(f, state, begin):
 
 @app.page()
 @choice
-def rock(state, begin):
+def rock(state: State, begin: str) -> State:
     state.choice = Choice.ROCK
     return state
 
 
 @app.page()
 @choice
-def paper(state, begin):
+def paper(state: State, begin: str) -> State:
     state.choice = Choice.PAPER
     return state
 
 
 @app.page()
 @choice
-def scissors(state, begin):
+def scissors(state: State, begin: str) -> State:
     state.choice = Choice.SCISSORS
     return state
 
