@@ -17,4 +17,4 @@ twine==3.4.1
 wheel
 
 # example
-Pygments==2.9.0
+Pygments==2.15.0
